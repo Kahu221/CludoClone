@@ -29,7 +29,8 @@ public class Board {
 
 	//remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
 	public Board(int boardSize) {
-		
+
+
 		this.boardSize = boardSize;
 		this.board = new Tile[boardSize][boardSize];
 		//initilisation of the board
@@ -43,25 +44,17 @@ public class Board {
 
 		var roomCards = Arrays.stream(RoomType.values()).map(RoomCard::new).toList();
 
-		var bert = new Player(CharacterType.BERT);
-		this.board[1][9].setPlayer(bert);
-		bert.setTile(this.board[1][9]);
-		this.players.add(bert);
+		var playerSeeds = new HashMap<Player, Position>();
+		playerSeeds.put(new Player(CharacterType.BERT), new Position(1,9));
+		playerSeeds.put(new Player(CharacterType.LUCINA), new Position(11,1));
+		playerSeeds.put(new Player(CharacterType.MALINA), new Position(9,22));
+		playerSeeds.put(new Player(CharacterType.PERCY), new Position(22,14));
 
-		var lucilla = new Player(CharacterType.LUCINA);
-		this.board[11][1].setPlayer(lucilla);
-		lucilla.setTile(this.board[11][1]);
-		this.players.add(lucilla);
-
-		var malina = new Player(CharacterType.MALINA);
-		this.board[9][22].setPlayer(malina);
-		malina.setTile(this.board[9][22]);
-		this.players.add(malina);
-
-		var percy = new Player(CharacterType.PERCY);
-		this.board[22][14].setPlayer(percy);
-		percy.setTile(this.board[22][14]);
-		this.players.add(percy);
+		for (var playerEntry : playerSeeds.entrySet()) {
+			this.players.add(playerEntry.getKey());
+			this.board[playerEntry.getValue().x()][playerEntry.getValue().y()].setPlayer(playerEntry.getKey());
+			playerEntry.getKey().setTile(this.board[playerEntry.getValue().x()][playerEntry.getValue().y()]);
+		}
 
 		var weapons = new ArrayList<>(List.of(WeaponType.values()));
 		Collections.shuffle(weapons);
