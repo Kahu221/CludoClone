@@ -25,7 +25,7 @@ public class Board {
 
 	//remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
 	public Board(int boardSize) {
-		
+
 		this.boardSize = boardSize;
 		this.board = new Tile[boardSize][boardSize];
 		//initilisation of the board
@@ -36,13 +36,13 @@ public class Board {
 		}
 
 		this.players = new ArrayDeque<>();
-		
+
 		//var weaponCards =
 				Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList();
 		var roomCards = Arrays.stream(RoomType.values()).map(RoomCard::new).toList();
 
 		players.addAll(Arrays.stream(CharacterType.values()).map(Player::new).toList());
-		
+
 		//putting players on the board (defo a better way to do this)
 		int start = 6;
 		for(Player p : players) {
@@ -63,7 +63,7 @@ public class Board {
 		for (int col = 0; col < boardSize; col++) {
 			for (int row = 0; row < boardSize; row++) {
 				System.out.print(this.board[row][col].render());
-				
+
 			}
 			System.out.println("|");
 		}
@@ -78,7 +78,7 @@ public class Board {
 
 	/**
 	 * Process the input of the player and move it to the correct position on the board
-	 * @param input
+	 * @param input where player moves
 	 */
 	void processInput(String input, Player p){
 		System.out.println(input + p.toString());
@@ -96,7 +96,7 @@ public class Board {
 	public boolean invalidInput(String input, Player player) {
 		Position position = player.getTile().getPosition();
 		position = getPosition(input, position);
-		return (position.x() < 0 || position.x() > boardSize - 1 || position.y() < 0 || position.y() > boardSize - 1) || (board[position.x()][position.y()].occupant.isPresent());
+		return position.x() < 0 || position.x() > boardSize - 1 || position.y() < 0 || position.y() > boardSize - 1 || board[position.x()][position.y()].occupant.isPresent();
 	}
 
 	private Position getPosition(String input, Position position) {
