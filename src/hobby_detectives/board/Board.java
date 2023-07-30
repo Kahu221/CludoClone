@@ -87,6 +87,9 @@ public class Board {
 		Position playerPos = p.getTile().getPosition();
 		//remove player from board (could cause issues if inccorect input is put in)
 		this.board[playerPos.x()][playerPos.y()].setPlayer(null);
+
+
+
 		for(char token : input.toLowerCase().toCharArray()){
 			switch(token){
 				case 'l' -> playerPos = new Position(playerPos.x() - 1, playerPos.y());
@@ -98,6 +101,19 @@ public class Board {
 		//put player on new pos
 		p.setTile(this.board[playerPos.x()][playerPos.y()]);
 		this.board[playerPos.x()][playerPos.y()].setPlayer(p);
+	}
+
+	public boolean validInput(String input, Player player) {
+		Position position = player.getTile().getPosition();
+		for(char token : input.toLowerCase().toCharArray()){
+			switch(token){
+				case 'l' -> position = new Position(position.x() - 1, position.y());
+				case 'r' -> position = new Position(position.x() + 1, position.y());
+				case 'u' -> position = new Position(position.x(), position.y() - 1);
+				case 'd' -> position = new Position(position.x(), position.y() + 1);
+			}
+		}
+		return position.x() >= 0 && position.x() <= boardSize - 1 && position.y() >= 0 && position.y() <= boardSize - 1;
 	}
 
 	public void turn() {
@@ -113,6 +129,11 @@ public class Board {
 		if (input.length() != dice) {
 			while (input.length() > dice) {
 				System.out.println("That is not the correct length. Your input must have " + dice + " inputs.");
+				input = inputScanner.next();
+			}
+		} else if(!validInput(input, player)) {
+			while (!validInput(input, player)) {
+				System.out.println("Input invalid, would result in character going out of bounds. Your input must stay within game borders");
 				input = inputScanner.next();
 			}
 		}
