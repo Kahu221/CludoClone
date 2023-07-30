@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.RoomType;
@@ -18,6 +19,7 @@ public class Board {
 	private final int boardSize;
 	public Random random = new Random();
 	private final Queue<Player> players;
+	private final List<Estate> estates;
 
 	public PlayerCard correctPlayer;
 	public WeaponCard correctWeapon;
@@ -51,6 +53,25 @@ public class Board {
 			this.board[start][0].setPlayer(p);
 			p.setTile(this.board[start][0]);
 			start+= 3;
+		}
+
+		var weapons = new ArrayList<>(List.of(WeaponType.values()));
+		Collections.shuffle(weapons);
+
+		// initialise estates
+		estates = List.of(
+				new Estate(new Position(2,2), 5, 5, RoomType.HAUNTED_HOUSE, weapons.remove(0)),
+				new Estate(new Position(2, 17), 5, 5, RoomType.CALAMITY_CASTLE, weapons.remove(0)),
+				new Estate(new Position(9, 10), 6, 4, RoomType.VISITATION_VILLA, weapons.remove(0)),
+				new Estate(new Position(17, 2), 5, 5, RoomType.MANIC_MANOR, weapons.remove(0)),
+				new Estate(new Position(17, 17), 5, 5, RoomType.PERIL_PALACE, weapons.remove(0))
+		);
+
+		for (Estate e : estates) {
+			board[e.getPosition().x()][e.getPosition().y()] = e;
+			for (Tile fill : e.generateFillTiles()) {
+				board[fill.getPosition().x()][fill.getPosition().y()] = fill;
+			}
 		}
 	}
 	public static void clear(){
