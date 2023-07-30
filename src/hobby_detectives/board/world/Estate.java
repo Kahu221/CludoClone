@@ -31,6 +31,10 @@ public class Estate extends Tile {
         return "|" + this.type.name().charAt(0);
     }
 
+    /**
+     * This method generates the "fill tiles" for an estate, because an estate is a multi-tile block.
+     * Estates are always positioned in the top-left corner (origin), and fan out to fill the multi-tile area.
+     */
     public Collection<Tile> generateFillTiles() {
         var fills = new ArrayList<Tile>();
         for (int ix = 0; ix < this.width; ix++) {
@@ -39,6 +43,7 @@ public class Estate extends Tile {
                 fills.add(new Tile(new Position(this.position.x()+ix, this.position.y()+iy)) {
                    @Override
                    public String render() {
+                       if (this.occupant.isPresent()) return "|" + this.occupant.get().getCharacter().toString().charAt(0);
                        return Estate.this.render();
                    }
                 });

@@ -40,20 +40,28 @@ public class Board {
 		}
 
 		this.players = new ArrayDeque<>();
-		
-		//var weaponCards =
-				Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList();
+
 		var roomCards = Arrays.stream(RoomType.values()).map(RoomCard::new).toList();
 
-		players.addAll(Arrays.stream(CharacterType.values()).map(Player::new).toList());
-		
-		//putting players on the board (defo a better way to do this)
-		int start = 6;
-		for(Player p : players) {
-			this.board[start][0].setPlayer(p);
-			p.setTile(this.board[start][0]);
-			start+= 3;
-		}
+		var bert = new Player(CharacterType.BERT);
+		this.board[1][9].setPlayer(bert);
+		bert.setTile(this.board[1][9]);
+		this.players.add(bert);
+
+		var lucilla = new Player(CharacterType.LUCINA);
+		this.board[11][1].setPlayer(lucilla);
+		lucilla.setTile(this.board[11][1]);
+		this.players.add(lucilla);
+
+		var malina = new Player(CharacterType.MALINA);
+		this.board[9][22].setPlayer(malina);
+		malina.setTile(this.board[9][22]);
+		this.players.add(malina);
+
+		var percy = new Player(CharacterType.PERCY);
+		this.board[22][14].setPlayer(percy);
+		percy.setTile(this.board[22][14]);
+		this.players.add(percy);
 
 		var weapons = new ArrayList<>(List.of(WeaponType.values()));
 		Collections.shuffle(weapons);
