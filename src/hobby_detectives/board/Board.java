@@ -1,8 +1,6 @@
 package hobby_detectives.board;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.IntStream;
 
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.data.CharacterType;
@@ -89,22 +87,19 @@ public class Board {
 		this.board[playerPos.x()][playerPos.y()].setPlayer(null);
 
 
-
-		for(char token : input.toLowerCase().toCharArray()){
-			switch(token){
-				case 'l' -> playerPos = new Position(playerPos.x() - 1, playerPos.y());
-				case 'r' -> playerPos = new Position(playerPos.x() + 1, playerPos.y());
-				case 'u' -> playerPos = new Position(playerPos.x(), playerPos.y() - 1);
-				case 'd' -> playerPos = new Position(playerPos.x(), playerPos.y() + 1);
-			}
-		}
+		playerPos = getPosition(input, playerPos);
 		//put player on new pos
 		p.setTile(this.board[playerPos.x()][playerPos.y()]);
 		this.board[playerPos.x()][playerPos.y()].setPlayer(p);
 	}
 
-	public boolean validInput(String input, Player player) {
+	public boolean invalidInput(String input, Player player) {
 		Position position = player.getTile().getPosition();
+		position = getPosition(input, position);
+		return (position.x() < 0 || position.x() > boardSize - 1 || position.y() < 0 || position.y() > boardSize - 1) || (board[position.x()][position.y()].occupant.isPresent());
+	}
+
+	private Position getPosition(String input, Position position) {
 		for(char token : input.toLowerCase().toCharArray()){
 			switch(token){
 				case 'l' -> position = new Position(position.x() - 1, position.y());
@@ -113,7 +108,7 @@ public class Board {
 				case 'd' -> position = new Position(position.x(), position.y() + 1);
 			}
 		}
-		return position.x() >= 0 && position.x() <= boardSize - 1 && position.y() >= 0 && position.y() <= boardSize - 1;
+		return position;
 	}
 
 	public void turn() {
@@ -131,9 +126,9 @@ public class Board {
 				System.out.println("That is not the correct length. Your input must have " + dice + " inputs.");
 				input = inputScanner.next();
 			}
-		} else if(!validInput(input, player)) {
-			while (!validInput(input, player)) {
-				System.out.println("Input invalid, would result in character going out of bounds. Your input must stay within game borders");
+		} else if(invalidInput(input, player)) {
+			while (invalidInput(input, player)) {
+				System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
 				input = inputScanner.next();
 			}
 		}
