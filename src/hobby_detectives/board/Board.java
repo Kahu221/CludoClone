@@ -119,19 +119,21 @@ public class Board {
 		draw();
 		System.out.println("Above shows your position on the board!");
 		System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
-		var input = inputScanner.next();
+		System.out.println("before the scanner");
+		var input = inputScanner.nextLine();
 
-		if (input.length() != dice) {
-			while (input.length() > dice) {
-				System.out.println("That is not the correct length. Your input must have " + dice + " inputs.");
-				input = inputScanner.next();
-			}
-		} else if(invalidInput(input, player)) {
-			while (invalidInput(input, player)) {
-				System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
-				input = inputScanner.next();
+		if (input.length() != dice || invalidInput(input, player)) {
+			while (input.length() != dice || invalidInput(input, player)) {
+				if (input.length() != dice) {
+					System.out.println("That is not the correct length. Your input must have " + dice + " inputs.");
+					input = inputScanner.nextLine();
+				} else if(invalidInput(input, player)) {
+					System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
+					input = inputScanner.nextLine();
+				}
 			}
 		}
+		
 		processInput(input, player);
 		this.players.add(player);
 	}
