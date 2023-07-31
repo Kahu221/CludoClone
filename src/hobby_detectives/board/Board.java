@@ -3,6 +3,7 @@ package hobby_detectives.board;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
@@ -29,8 +30,6 @@ public class Board {
 
 	//remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
 	public Board(int boardSize) {
-
-
 		this.boardSize = boardSize;
 		this.board = new Tile[boardSize][boardSize];
 		//initilisation of the board
@@ -61,11 +60,20 @@ public class Board {
 
 		// initialise estates
 		estates = List.of(
-				new Estate(new Position(2,2), 5, 5, RoomType.HAUNTED_HOUSE, weapons.remove(0)),
-				new Estate(new Position(2, 17), 5, 5, RoomType.CALAMITY_CASTLE, weapons.remove(0)),
-				new Estate(new Position(9, 10), 6, 4, RoomType.VISITATION_VILLA, weapons.remove(0)),
-				new Estate(new Position(17, 2), 5, 5, RoomType.MANIC_MANOR, weapons.remove(0)),
-				new Estate(new Position(17, 17), 5, 5, RoomType.PERIL_PALACE, weapons.remove(0))
+				new Estate(new Position(2,2), 5, 5, RoomType.HAUNTED_HOUSE, weapons.remove(0),
+						List.of(new Position(4,1), new Position(3, 4))),
+
+				new Estate(new Position(2, 17), 5, 5, RoomType.CALAMITY_CASTLE, weapons.remove(0),
+						List.of(new Position(1, 0), new Position(4, 1))),
+
+				new Estate(new Position(9, 10), 6, 4, RoomType.VISITATION_VILLA, weapons.remove(0),
+						List.of(new Position(0, 2), new Position(3, 0), new Position(2, 3), new Position(5, 1))),
+
+				new Estate(new Position(17, 2), 5, 5, RoomType.MANIC_MANOR, weapons.remove(0),
+						List.of(new Position(0, 3), new Position(3, 4))),
+
+				new Estate(new Position(17, 17), 5, 5, RoomType.PERIL_PALACE, weapons.remove(0),
+						List.of(new Position(1, 0), new Position(0, 3)))
 		);
 
 		for (Estate e : estates) {
@@ -105,24 +113,47 @@ public class Board {
 	 * @param input
 	 */
 	void processInput(String input, Player p){
-		System.out.println(input + p.toString());
-		Position playerPos = p.getTile().getPosition();
-		//remove player from board (could cause issues if inccorect input is put in)
-		this.board[playerPos.x()][playerPos.y()].setPlayer(null);
+		Queue<Character> inputQueue = new ArrayDeque<>();
+		for (char i : input.toLowerCase().toCharArray()) {
+			inputQueue.add(i);
+		}
+		while (!inputQueue.isEmpty()) {
+			char token = inputQueue.poll();
+			var playerPos = p.getTile().getPosition();
+			p.getTile().setPlayer(null);
+			Position possibleTranslate = switch (token) {
+				case 'l' -> playerPos.add(new Position(-1,0));
+				case 'r' -> playerPos.add(new Position(1,0));
+				case 'u' -> playerPos.add(new Position(0,-1));
+				case 'd' -> playerPos.add(new Position(0,1));
+				default -> playerPos;
+			};
 
-
-
-		for(char token : input.toLowerCase().toCharArray()){
-			switch(token){
-				case 'l' -> playerPos = new Position(playerPos.x() - 1, playerPos.y());
-				case 'r' -> playerPos = new Position(playerPos.x() + 1, playerPos.y());
-				case 'u' -> playerPos = new Position(playerPos.x(), playerPos.y() - 1);
-				case 'd' -> playerPos = new Position(playerPos.x(), playerPos.y() + 1);
+			// Discover what's on the board at that location
+			Tile t = read(possibleTranslate);
+			System.out.println(t);
+			if (t instanceof Estate e) {
+				tryMoveIntoEstate(p,possibleTranslate,e,t);
+			} else if (t instanceof Estate.EstateFillTile eft) {
+				tryMoveIntoEstate(p, possibleTranslate, eft.parent,t);
 			}
 		}
-		//put player on new pos
-		p.setTile(this.board[playerPos.x()][playerPos.y()]);
-		this.board[playerPos.x()][playerPos.y()].setPlayer(p);
+	}
+
+	public void tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e, Tile t) {
+		// Player is at a door.
+		if (e.doors.stream().anyMatch(d -> d.add(e.getPosition()).equals(possibleTranslate))) {
+			if (e.occupant.isEmpty()) {
+				e.setPlayer(p);
+				p.setTile(t);
+				System.out.println(p.getCharacter() + " has entered " + e.type + ".");
+			}
+		}
+	}
+
+	public Tile read(Position p) {
+		if (p.x() >= this.boardSize || p.x() < 0 || p.y() >= this.boardSize || p.y() < 0) return null;
+		return this.board[p.x()][p.y()];
 	}
 
 	public boolean validInput(String input, Player player) {
@@ -133,13 +164,14 @@ public class Board {
 				case 'r' -> position = new Position(position.x() + 1, position.y());
 				case 'u' -> position = new Position(position.x(), position.y() - 1);
 				case 'd' -> position = new Position(position.x(), position.y() + 1);
+				default -> {return false;}
 			}
 		}
 		return position.x() >= 0 && position.x() <= boardSize - 1 && position.y() >= 0 && position.y() <= boardSize - 1;
 	}
 
 	public void turn() {
-		clear();
+		//clear();
 		Player player = this.players.poll();
 		System.out.println("It is " + player.getCharacter().toString() + "'s turn to play.");
 		var dice = random.nextInt(2, 13);
