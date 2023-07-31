@@ -2,6 +2,7 @@ package hobby_detectives.board;
 
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
+import hobby_detectives.board.world.UnreachableArea;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.RoomType;
 import hobby_detectives.data.WeaponType;
@@ -37,7 +38,6 @@ public class Board {
         }
 
         this.players = new ArrayDeque<>();
-
 
         var playerSeeds = new HashMap<Player, Position>();
         playerSeeds.put(new Player(CharacterType.BERT), new Position(1, 9));
@@ -82,6 +82,20 @@ public class Board {
         this.correctPlayer = new PlayerCard(this.players.stream().toList().get(random.nextInt(0, this.players.size())));
         this.correctRoom = new RoomCard(this.estates.get(random.nextInt(0, this.estates.size())).type);
         this.correctWeapon = new WeaponCard(WeaponType.values()[random.nextInt(0, WeaponType.values().length)]);
+
+        // initialise unreachable areas
+        applyUnreachableArea(new Position(11, 5), 2, 2);
+        applyUnreachableArea(new Position(5, 11), 2, 2);
+        applyUnreachableArea(new Position(11, 17), 2, 2);
+        applyUnreachableArea(new Position(17, 11), 2, 2);
+    }
+
+    private void applyUnreachableArea(Position origin, int width, int height) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                board[origin.x() + x][origin.y() + y] = new UnreachableArea(origin.add(new Position(x, y)));
+            }
+        }
     }
 
     private static void clear() {
@@ -207,11 +221,17 @@ public class Board {
 
             // Discover what's on the board at that location
             Tile t = read(possibleTranslate);
-            System.out.println(t);
+
+            // Check if the player is attempting to move into an estate.
             if (t instanceof Estate e) {
                 tryMoveIntoEstate(p, possibleTranslate, e);
+
+                // Check if the player is attempting to move into an estate fill tile.
             } else if (t instanceof Estate.EstateFillTile eft) {
                 tryMoveIntoEstate(p, possibleTranslate, eft.parent);
+            } else {
+                t.setPlayer(p);
+                p.setTile(t);
             }
         }
     }

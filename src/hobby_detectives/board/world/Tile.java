@@ -23,4 +23,9 @@ public class Tile extends BoardObject {
         if (occupant.isPresent()) return "|" + occupant.get().getCharacter().toString().charAt(0);
         return "|_";
     }
+
+    @Override
+    public String toString() {
+        return "Tile at " + this.position + ": " + this.render();
+    }
 }
