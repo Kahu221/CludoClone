@@ -8,9 +8,14 @@ import hobby_detectives.player.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class Estate extends Tile {
+    public final int width;
+    public final int height;
+    public final List<Position> doors;
+    public RoomType type;
+    public WeaponType weapon;
+    public List<Player> players = new ArrayList<>();
     public Estate(Position position, int width, int height,
                   RoomType type,
                   WeaponType weapon,
@@ -22,14 +27,6 @@ public class Estate extends Tile {
         this.type = type;
         this.doors = doors;
     }
-
-    public RoomType type;
-    public WeaponType weapon;
-    public final int width;
-    public final int height;
-
-    public final List<Position> doors;
-    public List<Player> players = new ArrayList<>();
 
     @Override
     public String render() {
@@ -45,7 +42,7 @@ public class Estate extends Tile {
         for (int ix = 0; ix < this.width; ix++) {
             for (int iy = 0; iy < this.height; iy++) {
                 if (ix == 0 && iy == 0) continue;
-                fills.add(new EstateFillTile(new Position(this.position.x()+ix, this.position.y()+iy), this));
+                fills.add(new EstateFillTile(new Position(this.position.x() + ix, this.position.y() + iy), this));
             }
         }
         return fills;
@@ -53,6 +50,7 @@ public class Estate extends Tile {
 
     public class EstateFillTile extends Tile {
         public final Estate parent;
+
         public EstateFillTile(Position position, Estate parent) {
             super(position);
             this.parent = parent;
@@ -60,7 +58,7 @@ public class Estate extends Tile {
 
         @Override
         public String render() {
-            if (doors.stream().anyMatch(e-> Estate.this.position.add(e).equals(this.position))) {
+            if (doors.stream().anyMatch(e -> Estate.this.position.add(e).equals(this.position))) {
                 return "|*";
             }
             if (this.occupant.isPresent()) return "|" + this.occupant.get().getCharacter().toString().charAt(0);
