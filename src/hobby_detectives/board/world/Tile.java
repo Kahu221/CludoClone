@@ -12,14 +12,20 @@ public class Tile extends BoardObject {
     public Tile(Position position) {
         super(position);
     }
-    public void setPlayer(Player p){
-        if(p == null) occupant = Optional.empty();
+
+    public void setPlayer(Player p) {
+        if (p == null) occupant = Optional.empty();
         else occupant = Optional.of(p);
     }
 
     @Override
     public String render() {
-        if(occupant.isPresent()) return "|" + occupant.get().getCharacter().toString().charAt(0);
+        if (occupant.isPresent()) return "|" + occupant.get().getCharacter().toString().charAt(0);
         return "|_";
+    }
+
+    @Override
+    public String toString() {
+        return "Tile at " + this.position + ": " + this.render();
     }
 }
