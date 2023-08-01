@@ -153,8 +153,7 @@ public class Board {
      * @return A boolean representing whether the player's input is valid.
      */
     public boolean invalidInput(String input, Player player) {
-        Position position = player.getTile().getPosition();
-        position = getPosition(input, position);
+        Position position = getPosition(input, player.getTile().getPosition());
         Tile tile = read(position);
 
         if(tile == null) {
@@ -205,18 +204,16 @@ public class Board {
         System.out.println("before the scanner");
         var input = inputScanner.nextLine();
 
-        if (input.length() != dice || invalidInput(input, player)) {
-            while (input.length() > dice || invalidInput(input, player)) {
-                if (input.length() > dice) {
-                    System.out.println("That is not the correct length. Your input must have " + dice + " or lessuu inputs.");
-                    input = inputScanner.nextLine();
-                } else if(invalidInput(input, player)) {
-                    System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
-                    input = inputScanner.nextLine();
-                }
+        while (input.length() > dice || invalidInput(input, player)) {
+            if (input.length() > dice) {
+                System.out.println("That is not the correct length. Your input must have " + dice + " or lessuu inputs.");
+                input = inputScanner.nextLine();
+            } else if(invalidInput(input, player)) {
+                System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
+                input = inputScanner.nextLine();
             }
         }
-
+        
         processInput(input, player);
         this.players.add(player);
     }
