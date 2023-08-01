@@ -153,7 +153,11 @@ public class Board {
      * @return A boolean representing whether the player's input is valid.
      */
     public boolean invalidInput(String input, Player player) {
-        Position position = getPosition(input, player.getTile().getPosition());
+        Optional<Position> positionOptional = getPosition(input, player.getTile().getPosition());
+        if (positionOptional.isEmpty()) {
+            return true;
+        }
+        Position position = positionOptional.get();
         Tile tile = read(position);
 
         if(tile == null) {
@@ -177,16 +181,19 @@ public class Board {
         return false;
     }
 
-    private Position getPosition(String input, Position position) {
+    private Optional<Position> getPosition(String input, Position position) {
         for(char token : input.toLowerCase().toCharArray()){
             switch(token){
                 case 'l' -> position = new Position(position.x() - 1, position.y());
                 case 'r' -> position = new Position(position.x() + 1, position.y());
                 case 'u' -> position = new Position(position.x(), position.y() - 1);
                 case 'd' -> position = new Position(position.x(), position.y() + 1);
+                default -> {
+                    return Optional.empty();
+                }
             }
         }
-        return position;
+        return Optional.ofNullable(position);
     }
 
     /**
