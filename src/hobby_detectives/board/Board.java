@@ -3,7 +3,6 @@ package hobby_detectives.board;
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
-import hobby_detectives.board.world.Wall;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.RoomType;
 import hobby_detectives.data.WeaponType;
