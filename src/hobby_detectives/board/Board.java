@@ -3,6 +3,7 @@ package hobby_detectives.board;
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
+import hobby_detectives.board.world.Wall;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.RoomType;
 import hobby_detectives.data.WeaponType;
@@ -155,7 +156,27 @@ public class Board {
     public boolean invalidInput(String input, Player player) {
         Position position = player.getTile().getPosition();
         position = getPosition(input, position);
-        return position.x() < 0 || position.x() > boardSize - 1 || position.y() < 0 || position.y() > boardSize - 1 || board[position.x()][position.y()].occupant.isPresent();
+        Tile tile = read(position);
+
+        if(tile == null) {
+            return true;
+        }
+        if(tile.occupant.isPresent()) {
+            return true;
+        }
+        if(tile instanceof Estate) {
+            return true;
+        }
+        if(tile instanceof Estate.EstateFillTile eft) {
+            int count = 0;
+            for (Position p : eft.parent.doors) {
+                if(p.add(eft.parent.getPosition()).equals(position)) {
+                    count++;
+                }
+            }
+            return count == 0;
+        }
+        return false;
     }
 
     private Position getPosition(String input, Position position) {
@@ -175,7 +196,7 @@ public class Board {
      * This method blocks while waiting for input.
      */
     private void turn() {
-        clear();
+        //clear();
         Player player = this.players.poll();
         System.out.println("It is " + player.getCharacter().toString() + "'s turn to play.");
         var dice = random.nextInt(2, 13);
@@ -186,9 +207,9 @@ public class Board {
         var input = inputScanner.nextLine();
 
         if (input.length() != dice || invalidInput(input, player)) {
-            while (input.length() != dice || invalidInput(input, player)) {
-                if (input.length() != dice) {
-                    System.out.println("That is not the correct length. Your input must have " + dice + " inputs.");
+            while (input.length() > dice || invalidInput(input, player)) {
+                if (input.length() > dice) {
+                    System.out.println("That is not the correct length. Your input must have " + dice + " or lessuu inputs.");
                     input = inputScanner.nextLine();
                 } else if(invalidInput(input, player)) {
                     System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
