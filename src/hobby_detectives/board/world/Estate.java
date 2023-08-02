@@ -1,5 +1,6 @@
 package hobby_detectives.board.world;
 
+import hobby_detectives.data.Direction;
 import hobby_detectives.data.RoomType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
@@ -13,19 +14,23 @@ public class Estate extends Tile {
     public final int width;
     public final int height;
     public final List<Position> doors;
+    public final List<Direction> doorDirections;
     public RoomType type;
     public WeaponType weapon;
     public List<Player> players = new ArrayList<>();
     public Estate(Position position, int width, int height,
                   RoomType type,
                   WeaponType weapon,
-                  List<Position> doors) {
+                  List<Position> doors,
+                  List<Direction> doorDirections
+                  ) {
         super(position);
         this.width = width;
         this.height = height;
         this.weapon = weapon;
         this.type = type;
         this.doors = doors;
+        this.doorDirections = doorDirections;
     }
 
     @Override

@@ -4,6 +4,7 @@ import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
 import hobby_detectives.data.CharacterType;
+import hobby_detectives.data.Direction;
 import hobby_detectives.data.RoomType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
@@ -57,19 +58,29 @@ public class Board {
         // initialise estates
         estates = List.of(
                 new Estate(new Position(2, 2), 5, 5, RoomType.HAUNTED_HOUSE, weapons.remove(0),
-                        List.of(new Position(4, 1), new Position(3, 4))),
+                        List.of(new Position(4, 1), new Position(3, 4)),
+                        List.of(Direction.RIGHT, Direction.DOWN)
+                ),
 
                 new Estate(new Position(2, 17), 5, 5, RoomType.CALAMITY_CASTLE, weapons.remove(0),
-                        List.of(new Position(1, 0), new Position(4, 1))),
+                        List.of(new Position(1, 0), new Position(4, 1)),
+                        List.of(Direction.UP, Direction.RIGHT)
+                        ),
 
                 new Estate(new Position(9, 10), 6, 4, RoomType.VISITATION_VILLA, weapons.remove(0),
-                        List.of(new Position(0, 2), new Position(3, 0), new Position(2, 3), new Position(5, 1))),
+                        List.of(new Position(0, 2), new Position(3, 0), new Position(2, 3), new Position(5, 1)),
+                        List.of(Direction.LEFT, Direction.UP, Direction.DOWN, Direction.RIGHT)
+                        ),
 
                 new Estate(new Position(17, 2), 5, 5, RoomType.MANIC_MANOR, weapons.remove(0),
-                        List.of(new Position(0, 3), new Position(3, 4))),
+                        List.of(new Position(0, 3), new Position(3, 4)),
+                        List.of(Direction.LEFT, Direction.DOWN)
+                        ),
 
                 new Estate(new Position(17, 17), 5, 5, RoomType.PERIL_PALACE, weapons.remove(0),
-                        List.of(new Position(1, 0), new Position(0, 3)))
+                        List.of(new Position(1, 0), new Position(0, 3)),
+                        List.of(Direction.UP, Direction.LEFT)
+                        )
         );
 
         for (Estate e : estates) {
@@ -154,6 +165,13 @@ public class Board {
      */
     public boolean invalidInput(String input, Player player) {
         Optional<Position> positionOptional = getPosition(input, player.getTile().getPosition());
+
+        if(player.getTile() instanceof Estate e) {
+            List<Character> possibleDirections = e.doorDirections.stream().map(Direction::label).toList();
+            Character directionPlayerWantsToLeaveEstate = input.charAt(0);
+            return !possibleDirections.contains(directionPlayerWantsToLeaveEstate);
+        }
+
         if (positionOptional.isEmpty()) {
             return true;
         }
@@ -213,10 +231,13 @@ public class Board {
 
         while (input.length() > dice || invalidInput(input, player)) {
             if (input.length() > dice) {
-                System.out.println("That is not the correct length. Your input must have " + dice + " or lessuu inputs.");
+                System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs.");
                 input = inputScanner.nextLine();
             } else if(invalidInput(input, player)) {
-                System.out.println("Input invalid, would result in character going out of bounds or within another player. Your input must stay within game borders and not obstruct other players, please re-enter:");
+                System.out.println("""
+                        Input invalid, would result in character going out of bounds or within another player.\s
+                        Make sure there is a door in the direction you intend to leave if you are in an Estate!
+                        Your input must stay within game borders and not obstruct other players, please re-enter:""");
                 input = inputScanner.nextLine();
             }
         }
@@ -235,6 +256,32 @@ public class Board {
         for (char i : input.toLowerCase().toCharArray()) {
             inputQueue.add(i);
         }
+
+        /* Check if the player is currently in an estate */
+        /* If they are we move them to a new location dependant on */
+        /* The door they leave through */
+
+        if(p.getTile() instanceof Estate estate) {
+            Character token = inputQueue.poll();
+            var playerPos = p.getTile().getPosition();
+            p.getTile().setPlayer(null);
+
+            List<Character> possibleDirections = estate.doorDirections.stream().map(Direction::label).toList();
+            int tokenIndex = possibleDirections.indexOf(token);
+            Position doorPosition = estate.doors.get(tokenIndex);
+
+            Position possibleTranslate = switch (token) {
+                case 'l' -> playerPos.add(new Position(-1 + doorPosition.x(), doorPosition.y()));
+                case 'r' -> playerPos.add(new Position(1 + doorPosition.x(), doorPosition.y()));
+                case 'u' -> playerPos.add(new Position(doorPosition.x(), -1 + doorPosition.y()));
+                case 'd' -> playerPos.add(new Position(doorPosition.x(), 1 + doorPosition.y()));
+                default -> playerPos;
+            };
+
+            movePlayerOnceByToken(possibleTranslate, p);
+        }
+
+
         while (!inputQueue.isEmpty()) {
             char token = inputQueue.poll();
             var playerPos = p.getTile().getPosition();
@@ -247,20 +294,22 @@ public class Board {
                 default -> playerPos;
             };
 
-            // Discover what's on the board at that location
-            Tile t = read(possibleTranslate);
+            movePlayerOnceByToken(possibleTranslate, p);
+        }
+    }
+    private void movePlayerOnceByToken(Position possibleTranslate, Player p) {
+        // Discover what's on the board at that location
+        Tile t = read(possibleTranslate);
 
-            // Check if the player is attempting to move into an estate.
-            if (t instanceof Estate e) {
-                tryMoveIntoEstate(p, possibleTranslate, e);
-
-                // Check if the player is attempting to move into an estate fill tile.
-            } else if (t instanceof Estate.EstateFillTile eft) {
-                tryMoveIntoEstate(p, possibleTranslate, eft.parent);
-            } else {
-                t.setPlayer(p);
-                p.setTile(t);
-            }
+        // Check if the player is attempting to move into an estate.
+        if (t instanceof Estate e) {
+            tryMoveIntoEstate(p, possibleTranslate, e);
+            // Check if the player is attempting to move into an estate fill tile.
+        } else if (t instanceof Estate.EstateFillTile eft) {
+            tryMoveIntoEstate(p, possibleTranslate, eft.parent);
+        } else {
+            t.setPlayer(p);
+            p.setTile(t);
         }
     }
 }
