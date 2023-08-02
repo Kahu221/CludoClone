@@ -164,6 +164,7 @@ public class Board {
      * @return A boolean representing whether the player's input is valid.
      */
     public boolean invalidInput(String input, Player player) {
+        input = input.toLowerCase();
         Optional<Position> positionOptional = getPosition(input, player.getTile().getPosition());
 
         if(player.getTile() instanceof Estate e) {
@@ -224,9 +225,10 @@ public class Board {
         System.out.println("It is " + player.getCharacter().toString() + "'s turn to play.");
         var dice = random.nextInt(2, 13);
         draw();
-        System.out.println("Above shows your position on the board!");
+        if (player.getTile() instanceof Estate e) {
+            System.out.println("You are currently in " + e.type + ".");
+        }
         System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
-        System.out.println("before the scanner");
         var input = inputScanner.nextLine();
 
         while (input.length() > dice || invalidInput(input, player)) {
