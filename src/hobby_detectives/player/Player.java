@@ -14,6 +14,8 @@ public class Player {
 
     private boolean allowedToGuess = true;
 
+    private String color;
+
     public boolean getAllowedToGuess() {
         return allowedToGuess;
     }
@@ -22,9 +24,10 @@ public class Player {
         allowedToGuess = n;
     }
 
-    public Player(CharacterType character, List<Card> cards) {
+    public Player(CharacterType character, List<Card> cards, String color) {
         this.cards = cards;
         this.character = character;
+        this.color = color;
     }
 
     public List<Card> getCards() {
@@ -33,6 +36,10 @@ public class Player {
 
     public CharacterType getCharacter() {
         return this.character;
+    }
+
+    public String getColor() {
+        return this.color;
     }
 
     public Tile getTile() {

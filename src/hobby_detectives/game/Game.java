@@ -4,10 +4,7 @@ import hobby_detectives.board.Board;
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
-import hobby_detectives.data.CharacterType;
-import hobby_detectives.data.Direction;
-import hobby_detectives.data.EstateType;
-import hobby_detectives.data.WeaponType;
+import hobby_detectives.data.*;
 import hobby_detectives.engine.Position;
 import hobby_detectives.player.Player;
 
@@ -34,7 +31,7 @@ public class Game {
         //initililze players
         var playerSeeds = new ArrayList<Player>();
         IntStream.range(0, numPlayers).forEach(i -> {
-            Player currentPlayer = new Player(CharacterType.values()[i], new ArrayList<Card>());
+            Player currentPlayer = new Player(CharacterType.values()[i], new ArrayList<Card>(), CharacterColors.values()[i].getColor());
             playerSeeds.add(currentPlayer);
             switch (CharacterType.values()[i]) {
                 case LUCINA -> {
@@ -225,7 +222,7 @@ public class Game {
                         for (var refuteCard : possibleRefutationCards) {
                             System.out.println("- " + refuteCard);
                         }
-                        String cardName = inputScanner.next();
+                        String cardName = inputScanner.next().toUpperCase();
                         refutedCard = possibleRefutationCards.stream().filter(e -> e.toString().equals(cardName)).findFirst().orElse(null);
                         if (refutedCard != null) {
                             anyPlayerRefuted = true;
