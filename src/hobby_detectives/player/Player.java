@@ -4,7 +4,6 @@ import hobby_detectives.board.world.Tile;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.game.Card;
 
-import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -42,6 +41,10 @@ public class Player {
 
     public void setTile(Tile t) {
         this.currentTile = t;
+    }
+
+    public void addCard(Card c) {
+        cards.add(c);
     }
 
     public String toString() {

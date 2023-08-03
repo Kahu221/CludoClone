@@ -12,6 +12,7 @@ import hobby_detectives.engine.Position;
 import hobby_detectives.player.Player;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Game {
     public final Queue<Player> players;
@@ -30,6 +31,31 @@ public class Game {
             System.out.println("That is not a valid player size.");
             System.exit(0);
         }
+        //initililze players
+        var playerSeeds = new ArrayList<Player>();
+        IntStream.range(0, numPlayers).forEach(i -> {
+            Player currentPlayer = new Player(CharacterType.values()[i], new ArrayList<Card>());
+            playerSeeds.add(currentPlayer);
+            switch (CharacterType.values()[i]) {
+                case LUCINA -> {
+                    board.read(new Position(11, 1)).setPlayer(currentPlayer);
+                    currentPlayer.setTile(board.read(new Position(11, 1)));
+                }
+                case BERT -> {
+                    board.read(new Position(1, 9)).setPlayer(currentPlayer);
+                    currentPlayer.setTile(board.read(new Position(1, 9)));
+                }
+                case MALINA -> {
+                    board.read(new Position(9, 22)).setPlayer(currentPlayer);
+                    currentPlayer.setTile(board.read(new Position(9, 22)));
+                }
+                case PERCY -> {
+                    board.read(new Position(22, 14)).setPlayer(currentPlayer);
+                    currentPlayer.setTile(board.read(new Position(22, 14)));
+                }
+                default -> throw new Error();
+            }
+        });
 
         // initialize cards and correct cards
         List<PlayerCard> playerCards = new ArrayList<>(Arrays.stream(CharacterType.values()).map(PlayerCard::new).toList());
@@ -45,17 +71,45 @@ public class Game {
                 playerCards.remove(0)
         );
 
-        this.players = new ArrayDeque<>();
-        var remainingCards = new ArrayList<Card>();
+        var remainingCards = new ArrayDeque<Card>();
         remainingCards.addAll(playerCards);
         remainingCards.addAll(weaponCards);
         remainingCards.addAll(estateCards);
-        Collections.shuffle(remainingCards);
+        int counter = 0;
+        while (!remainingCards.isEmpty()) {
+            Card current = remainingCards.pop();
+            playerSeeds.get(counter).addCard(current);
+            counter++;
+            if (counter >= numPlayers) counter = 0;
+        }
 
-        var cardsPerPlayer = (int) Math.ceil(remainingCards.size() / (float) numPlayers);
 
-        var playerSeeds = new HashMap<Player, Position>();
-        playerSeeds.put(new Player(CharacterType.BERT,
+        players = new ArrayDeque<>(playerSeeds);
+
+//        Bert (1,9)
+//        Lucina (11,1)
+//        Malina (9,22)
+//        Percy (22,14)
+
+
+//        Collections.shuffle(remainingCards);
+//
+//        var cardsPerPlayer = (int) Math.ceil(remainingCards.size() / (float) numPlayers);
+//
+//        var playerSeeds = new HashMap<Player, Position>();
+//        for (var playerEntry : playerSeeds.entrySet()) {
+//            this.players.add(playerEntry.getKey());
+//            board.read(playerEntry.getValue()).setPlayer(playerEntry.getKey());
+//            playerEntry.getKey().setTile(board.read(playerEntry.getValue()));
+//        }
+        /*
+        Starting positions:
+        Bert (1,9)
+        Lucina (11,1)
+        Malina (9,22)
+        Percy (22,14)
+
+                playerSeeds.put(new Player(CharacterType.BERT,
                 remainingCards.subList(0, Math.min(remainingCards.size(), cardsPerPlayer))), new Position(1, 9));
         playerSeeds.put(new Player(CharacterType.LUCINA,
                 remainingCards.subList(cardsPerPlayer, Math.min(remainingCards.size(), cardsPerPlayer * 2))), new Position(11, 1));
@@ -64,11 +118,7 @@ public class Game {
         if (numPlayers == 4) playerSeeds.put(new Player(CharacterType.PERCY,
                 remainingCards.subList(cardsPerPlayer * 3, Math.min(remainingCards.size(), cardsPerPlayer * 4))), new Position(22, 14));
 
-        for (var playerEntry : playerSeeds.entrySet()) {
-            this.players.add(playerEntry.getKey());
-            board.read(playerEntry.getValue()).setPlayer(playerEntry.getKey());
-            playerEntry.getKey().setTile(board.read(playerEntry.getValue()));
-        }
+         */
     }
 
     public void run() {
@@ -227,14 +277,9 @@ public class Game {
         System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
         var input = inputScanner.nextLine();
 
-        while (input.length() > dice || invalidInput(input, player)) {
-            if (input.length() > dice) {
-                System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs.\nPlease re-enter:");
-                input = inputScanner.nextLine();
-            } else if (invalidInput(input, player)) {
-                System.out.println("Please re-enter");
-                input = inputScanner.nextLine();
-            }
+        while (invalidInput(input, player, dice)) {
+            System.out.println("Please re-enter");
+            input = inputScanner.nextLine();
         }
 
         processInput(input, player);
@@ -318,16 +363,21 @@ public class Game {
      * @param player The player who is currently playing.
      * @return A boolean representing whether the player's input is valid.
      */
-    public boolean invalidInput(String input, Player player) {
+    public boolean invalidInput(String input, Player player, int dice) {
         input = input.toLowerCase();
         Optional<Position> positionOptional = board.getPosition(input, player.getTile().getPosition());
+
+        if (input.length() > dice) {
+            System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs");
+            return true;
+        }
 
         if (player.getTile() instanceof Estate e) {
             List<Character> possibleDirections = e.doorDirections.stream().map(Direction::label).toList();
             Character directionPlayerWantsToLeaveEstate = input.charAt(0);
 
             if (!possibleDirections.contains(directionPlayerWantsToLeaveEstate)) {
-                System.out.println("You cannot exit " + e + " in that direction.");
+                System.out.println("You cannot exit " + e + " in that direction");
                 return true;
             }
         }
