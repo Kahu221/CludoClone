@@ -61,7 +61,7 @@ public class Game {
                 remainingCards.subList(cardsPerPlayer, Math.min(remainingCards.size(), cardsPerPlayer * 2))), new Position(11, 1));
         playerSeeds.put(new Player(CharacterType.MALINA,
                 remainingCards.subList(cardsPerPlayer * 2, Math.min(remainingCards.size(), cardsPerPlayer * 3))), new Position(9, 22));
-        playerSeeds.put(new Player(CharacterType.PERCY,
+        if (numPlayers == 4) playerSeeds.put(new Player(CharacterType.PERCY,
                 remainingCards.subList(cardsPerPlayer * 3, Math.min(remainingCards.size(), cardsPerPlayer * 4))), new Position(22, 14));
 
         for (var playerEntry : playerSeeds.entrySet()) {
@@ -230,12 +230,6 @@ public class Game {
                 System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs.\nPlease re-enter:");
                 input = inputScanner.nextLine();
             } else if (invalidInput(input, player)) {
-                /*
-                System.out.println("""
-                        Input invalid, would result in character going out of bounds or within another player.\s
-                        Make sure there is a door in the direction you intend to leave if you are in an Estate!
-                        Your input must stay within game borders and not obstruct other players, please re-enter:""");
-               */
                 System.out.println("Please re-enter");
                 input = inputScanner.nextLine();
             }
