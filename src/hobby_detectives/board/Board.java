@@ -3,28 +3,30 @@ package hobby_detectives.board;
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
-import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.Direction;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
-import hobby_detectives.game.*;
+import hobby_detectives.game.Card;
+import hobby_detectives.game.Game;
+import hobby_detectives.game.WeaponCard;
 import hobby_detectives.player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class Board {
     private final int boardSize;
-    private final Random random = new Random();
-    private final Queue<Player> players;
+    public final List<Card> unrefutedCards = new ArrayList<>();
     private final List<Estate> estates;
-    private final CardTriplet correctTriplet;
-    private boolean gameRunning = true;
     private final Tile[][] board;
-    private final Scanner inputScanner = new Scanner(System.in);
+    private final Game game;
 
     //remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
-    public Board(int boardSize) {
+    public Board(int boardSize, Game game) {
+        this.game = game;
         this.boardSize = boardSize;
         this.board = new Tile[boardSize][boardSize];
         //initilisation of the board
@@ -32,20 +34,6 @@ public class Board {
             for (int col = 0; col < boardSize; col++) {
                 this.board[row][col] = new Tile(new Position(row, col));
             }
-        }
-
-        this.players = new ArrayDeque<>();
-
-        var playerSeeds = new HashMap<Player, Position>();
-        playerSeeds.put(new Player(CharacterType.BERT), new Position(1, 9));
-        playerSeeds.put(new Player(CharacterType.LUCINA), new Position(11, 1));
-        playerSeeds.put(new Player(CharacterType.MALINA), new Position(9, 22));
-        playerSeeds.put(new Player(CharacterType.PERCY), new Position(22, 14));
-
-        for (var playerEntry : playerSeeds.entrySet()) {
-            this.players.add(playerEntry.getKey());
-            this.board[playerEntry.getValue().x()][playerEntry.getValue().y()].setPlayer(playerEntry.getKey());
-            playerEntry.getKey().setTile(this.board[playerEntry.getValue().x()][playerEntry.getValue().y()]);
         }
 
         var weapons = new ArrayList<>(List.of(WeaponType.values()));
@@ -91,22 +79,6 @@ public class Board {
         applyUnreachableArea(new Position(5, 11), 2, 2);
         applyUnreachableArea(new Position(11, 17), 2, 2);
         applyUnreachableArea(new Position(17, 11), 2, 2);
-
-        // initialize cards and correct cards
-        List<PlayerCard> playerCards = new ArrayList<>(this.players.stream().map(PlayerCard::new).toList());
-        Collections.shuffle(playerCards);
-        List<WeaponCard> weaponCards = new ArrayList<>(Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList());
-        Collections.shuffle(weaponCards);
-        List<EstateCard> estateCards = new ArrayList<>(estates.stream().map(estate -> new EstateCard(estate.type)).toList());
-        Collections.shuffle(estateCards);
-
-        correctTriplet = new CardTriplet(
-                weaponCards.remove(0),
-                estateCards.remove(0),
-                playerCards.remove(0)
-        );
-
-        int playerSize = this.players.size();
     }
 
     private void applyUnreachableArea(Position origin, int width, int height) {
@@ -123,7 +95,7 @@ public class Board {
         }
     }
 
-    private void draw() {
+    public void draw() {
         System.out.println("_________________________________________________");
         for (int col = 0; col < boardSize; col++) {
             for (int row = 0; row < boardSize; row++) {
@@ -134,24 +106,14 @@ public class Board {
         System.out.println("\n_________________________________________________");
     }
 
-    /**
-     * Runs the game, looping a sequence of turns until a victory state is achieved.
-     * This method will block until the completion of the game.
-     */
-    public void runGame() {
-        while (gameRunning) {
-            turn();
-        }
-    }
-
-    private void tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e) {
+    public void tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e) {
         // Player is at a door.
         if (e.doors.stream().anyMatch(d -> d.add(e.getPosition()).equals(possibleTranslate))) {
             if (e.occupant.isEmpty()) {
                 e.setPlayer(p);
                 p.setTile(e);
-                System.out.println(p.getCharacter() + " has entered " + e.type + ".");
-                promptPlayerForGuess(p, e);
+                p.getCards().add(new WeaponCard(e.weapon));
+                game.promptPlayerForGuess(p, e);
             }
         }
     }
@@ -164,51 +126,7 @@ public class Board {
         return this.board[p.x()][p.y()];
     }
 
-    /**
-     * Validates an input string as a possible move by the provided player.
-     *
-     * @param input  The user input to validate.
-     * @param player The player who is currently playing.
-     * @return A boolean representing whether the player's input is valid.
-     */
-    public boolean invalidInput(String input, Player player) {
-        input = input.toLowerCase();
-        Optional<Position> positionOptional = getPosition(input, player.getTile().getPosition());
-
-        if(player.getTile() instanceof Estate e) {
-            List<Character> possibleDirections = e.doorDirections.stream().map(Direction::label).toList();
-            Character directionPlayerWantsToLeaveEstate = input.charAt(0);
-            return !possibleDirections.contains(directionPlayerWantsToLeaveEstate);
-        }
-
-        if (positionOptional.isEmpty()) {
-            return true;
-        }
-        Position position = positionOptional.get();
-        Tile tile = read(position);
-
-        if(tile == null) {
-            return true;
-        }
-        if(tile.occupant.isPresent()) {
-            return true;
-        }
-        if(tile instanceof Estate) {
-            return true;
-        }
-        if(tile instanceof Estate.EstateFillTile eft) {
-            int count = 0;
-            for (Position p : eft.parent.doors) {
-                if(p.add(eft.parent.getPosition()).equals(position)) {
-                    count++;
-                }
-            }
-            return count == 0;
-        }
-        return false;
-    }
-
-    private Optional<Position> getPosition(String input, Position position) {
+    public Optional<Position> getPosition(String input, Position position) {
         for(char token : input.toLowerCase().toCharArray()){
             switch(token){
                 case 'l' -> position = new Position(position.x() - 1, position.y());
@@ -221,183 +139,5 @@ public class Board {
             }
         }
         return Optional.ofNullable(position);
-    }
-
-    /**
-     * Processes a single turn in the game.
-     * This method blocks while waiting for input.
-     */
-    private void turn() {
-        //clear();
-        Player player = this.players.poll();
-        System.out.println("It is " + player.getCharacter().toString() + "'s turn to play.");
-
-        var dice = random.nextInt(2, 13);
-        draw();
-        if (player.getTile() instanceof Estate e) {
-            promptPlayerForGuess(player, e);
-        }
-        System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
-        var input = inputScanner.nextLine();
-
-        while (input.length() > dice || invalidInput(input, player)) {
-            if (input.length() > dice) {
-                System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs.");
-                input = inputScanner.nextLine();
-            } else if(invalidInput(input, player)) {
-                System.out.println("""
-                        Input invalid, would result in character going out of bounds or within another player.\s
-                        Make sure there is a door in the direction you intend to leave if you are in an Estate!
-                        Your input must stay within game borders and not obstruct other players, please re-enter:""");
-                input = inputScanner.nextLine();
-            }
-        }
-        
-        processInput(input, player);
-        this.players.add(player);
-    }
-
-    public CardTriplet promptPlayerForCardTriplet(Player p) {
-        WeaponCard weaponGuessed = null;
-        while (weaponGuessed == null) {
-            System.out.println("Which weapon are you going to guess?");
-            for (Card w : p.getCards().stream().filter(e -> e instanceof WeaponCard).toList()) {
-                System.out.println("- " + ((WeaponCard) w).weapon);
-            }
-
-            var tWeaponGuessed = WeaponType.valueOf(inputScanner.next());
-            weaponGuessed = (WeaponCard) p.getCards().stream()
-                    .filter(e -> e instanceof WeaponCard ex && ex.weapon.equals(tWeaponGuessed))
-                    .findFirst().orElse(null);
-        }
-        EstateCard estateGuessed = null;
-        while (estateGuessed == null) {
-            System.out.println("What estate are you going to guess?");
-            for (Card e : p.getCards().stream().filter(e -> e instanceof EstateCard).toList()) {
-                System.out.println("- " + ((EstateCard) e).estate);
-            }
-
-            var tEstateGuessed = EstateType.valueOf(inputScanner.next());
-            estateGuessed = (EstateCard) p.getCards().stream()
-                    .filter(e -> e instanceof EstateCard ex && ex.estate.equals(tEstateGuessed))
-                    .findFirst().orElse(null);
-        }
-
-        PlayerCard characterGuessed = null;
-        while (characterGuessed == null) {
-            System.out.println("What character are you going to guess?");
-            for (Card e : p.getCards().stream().filter(e -> e instanceof PlayerCard).toList()) {
-                System.out.println("- " + ((PlayerCard) e).player);
-            }
-            var tCharacterGuessed = CharacterType.valueOf(inputScanner.next());
-            characterGuessed = (PlayerCard) p.getCards().stream()
-                    .filter(e -> e instanceof PlayerCard ex && ex.player.getCharacter().equals(tCharacterGuessed))
-                    .findFirst().orElse(null);
-        }
-
-        return new CardTriplet(weaponGuessed, estateGuessed, characterGuessed);
-    }
-
-    public void promptPlayerForGuess(Player p, Estate estate) {
-        System.out.println("You are in " + estate.type + ", which has the weapon " + estate.weapon + ".");
-        System.out.println("Would you like to make a guess? Type 'yes' to guess, and anything else to skip.");
-        var input = inputScanner.next().toLowerCase();
-        if (input.equals("yes") || input.equals("y")) {
-            CardTriplet triplet = promptPlayerForCardTriplet(p);
-
-            if (this.correctTriplet.equals(triplet)) {
-                System.out.println(p.getCharacter() + " has won the game!");
-                gameRunning = false;
-                return;
-            }
-
-            // Refutation
-            CharacterType[] guessOrder = {CharacterType.LUCINA, CharacterType.BERT, CharacterType.MALINA, CharacterType.PERCY};
-            for (CharacterType refuter : guessOrder) {
-                Player refuterPlayer = this.players.stream().filter(e -> e.getCharacter().equals(refuter)).findFirst().get();
-                if (!refuterPlayer.getAllowedToGuess()) continue;
-                System.out.println("It is " + refuter + "'s turn to refute.");
-                var possibleRefutationCards =
-                        refuterPlayer.getCards().stream().filter(refuterCard -> triplet.contains(refuterCard)).toList();
-                if (!possibleRefutationCards.isEmpty()) {
-                    Card refutedCard = null;
-                    while (refutedCard == null) {
-                        System.out.println("Please select one of the following cards to refute:");
-                        for (var refuteCard : possibleRefutationCards) {
-                            System.out.println("- " + refuteCard);
-                        }
-                        String cardName = inputScanner.next();
-                        refutedCard = possibleRefutationCards.stream().filter(e -> e.toString().equals(cardName)).findFirst().orElse(null);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Processes the input of the player and move it to the correct position on the board.
-     *
-     * @param input
-     */
-    private void processInput(String input, Player p) {
-        Queue<Character> inputQueue = new ArrayDeque<>();
-        for (char i : input.toLowerCase().toCharArray()) {
-            inputQueue.add(i);
-        }
-
-        /* Check if the player is currently in an estate */
-        /* If they are we move them to a new location dependant on */
-        /* The door they leave through */
-
-        if(p.getTile() instanceof Estate estate) {
-            Character token = inputQueue.poll();
-            var playerPos = p.getTile().getPosition();
-            p.getTile().setPlayer(null);
-
-            List<Character> possibleDirections = estate.doorDirections.stream().map(Direction::label).toList();
-            int tokenIndex = possibleDirections.indexOf(token);
-            Position doorPosition = estate.doors.get(tokenIndex);
-
-            Position possibleTranslate = switch (token) {
-                case 'l' -> playerPos.add(new Position(-1 + doorPosition.x(), doorPosition.y()));
-                case 'r' -> playerPos.add(new Position(1 + doorPosition.x(), doorPosition.y()));
-                case 'u' -> playerPos.add(new Position(doorPosition.x(), -1 + doorPosition.y()));
-                case 'd' -> playerPos.add(new Position(doorPosition.x(), 1 + doorPosition.y()));
-                default -> playerPos;
-            };
-
-            movePlayerOnceByToken(possibleTranslate, p);
-        }
-
-
-        while (!inputQueue.isEmpty()) {
-            char token = inputQueue.poll();
-            var playerPos = p.getTile().getPosition();
-            p.getTile().setPlayer(null);
-            Position possibleTranslate = switch (token) {
-                case 'l' -> playerPos.add(new Position(-1, 0));
-                case 'r' -> playerPos.add(new Position(1, 0));
-                case 'u' -> playerPos.add(new Position(0, -1));
-                case 'd' -> playerPos.add(new Position(0, 1));
-                default -> playerPos;
-            };
-
-            movePlayerOnceByToken(possibleTranslate, p);
-        }
-    }
-    private void movePlayerOnceByToken(Position possibleTranslate, Player p) {
-        // Discover what's on the board at that location
-        Tile t = read(possibleTranslate);
-
-        // Check if the player is attempting to move into an estate.
-        if (t instanceof Estate e) {
-            tryMoveIntoEstate(p, possibleTranslate, e);
-            // Check if the player is attempting to move into an estate fill tile.
-        } else if (t instanceof Estate.EstateFillTile eft) {
-            tryMoveIntoEstate(p, possibleTranslate, eft.parent);
-        } else {
-            t.setPlayer(p);
-            p.setTile(t);
-        }
     }
 }

@@ -1,19 +1,19 @@
 package hobby_detectives.game;
 
-import hobby_detectives.player.Player;
+import hobby_detectives.data.CharacterType;
 
 public class PlayerCard extends Card {
-    public final Player player;
+    public final CharacterType character;
 
-    public PlayerCard(Player player) {
-        this.player = player;
+    public PlayerCard(CharacterType character) {
+        this.character = character;
     }
 
     public boolean equals(Card c) {
-        return c instanceof PlayerCard cx && cx.player.getCharacter().equals(player.getCharacter());
+        return c instanceof PlayerCard cx && cx.character.equals(character);
     }
 
     public String toString() {
-        return player.getCharacter().toString();
+        return character.toString();
     }
 }
