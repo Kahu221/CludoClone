@@ -101,7 +101,7 @@ public class Game {
                 System.out.println("- " + ((WeaponCard) w).weapon);
             }
 
-            var tWeaponGuessed = WeaponType.valueOf(inputScanner.next());
+            var tWeaponGuessed = WeaponType.valueOf(inputScanner.next().toUpperCase());
             weaponGuessed = (WeaponCard) p.getCards().stream()
                     .filter(e -> e instanceof WeaponCard ex && ex.weapon.equals(tWeaponGuessed))
                     .findFirst().orElse(null);
@@ -117,7 +117,7 @@ public class Game {
                 System.out.println("- " + ((EstateCard) e).estate);
             }
 
-            var tEstateGuessed = EstateType.valueOf(inputScanner.next());
+            var tEstateGuessed = EstateType.valueOf(inputScanner.next().toUpperCase());
             estateGuessed = (EstateCard) p.getCards().stream()
                     .filter(e -> e instanceof EstateCard ex && ex.estate.equals(tEstateGuessed))
                     .findFirst().orElse(null);
@@ -132,7 +132,7 @@ public class Game {
             for (Card e : p.getCards().stream().filter(e -> e instanceof PlayerCard).toList()) {
                 System.out.println("- " + e);
             }
-            var tCharacterGuessed = CharacterType.valueOf(inputScanner.next());
+            var tCharacterGuessed = CharacterType.valueOf(inputScanner.next().toUpperCase());
             characterGuessed = (PlayerCard) p.getCards().stream()
                     .filter(e -> e instanceof PlayerCard ex && ex.character.equals(tCharacterGuessed))
                     .findFirst().orElse(null);
@@ -163,7 +163,9 @@ public class Game {
                 Player refuterPlayer = players.stream().filter(e -> e.getCharacter().equals(refuter)).findFirst().get();
                 if (!refuterPlayer.getAllowedToGuess()) continue;
                 var possibleRefutationCards =
-                        refuterPlayer.getCards().stream().filter(refuterCard -> weapon == refuterCard || player == refuterCard || new EstateCard(estate.type).equals(refuterCard)).toList();
+                        refuterPlayer.getCards().stream()
+                                .filter(refuterCard -> weapon == refuterCard || player == refuterCard || new EstateCard(estate.type).equals(refuterCard))
+                                .toList();
                 if (!possibleRefutationCards.isEmpty()) {
                     changeTo(refuterPlayer);
                     System.out.println("It is your turn to refute.");
