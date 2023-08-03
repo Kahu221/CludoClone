@@ -1,5 +1,6 @@
 package hobby_detectives.board.world;
 
+import hobby_detectives.data.CharacterColors;
 import hobby_detectives.engine.Position;
 
 public class UnreachableArea extends Tile {
@@ -9,6 +10,6 @@ public class UnreachableArea extends Tile {
 
     @Override
     public String render() {
-        return "  ";
+        return "|" + CharacterColors.BOLD.getColor() + "#" + CharacterColors.RESET.getColor();
     }
 }

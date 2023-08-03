@@ -1,5 +1,6 @@
 package hobby_detectives.board.world;
 
+import hobby_detectives.data.CharacterColors;
 import hobby_detectives.data.Direction;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
