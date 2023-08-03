@@ -151,6 +151,7 @@ public class Board {
                 e.setPlayer(p);
                 p.setTile(e);
                 System.out.println(p.getCharacter() + " has entered " + e.type + ".");
+                promptPlayerForGuess(p, e);
             }
         }
     }
@@ -319,9 +320,14 @@ public class Board {
                 var possibleRefutationCards =
                         refuterPlayer.getCards().stream().filter(refuterCard -> triplet.contains(refuterCard)).toList();
                 if (!possibleRefutationCards.isEmpty()) {
-                    System.out.println("Please select one of the following cards to refute:");
-                    for (var refuteCard : possibleRefutationCards) {
-                        System.out.println("- " + refuteCard);
+                    Card refutedCard = null;
+                    while (refutedCard == null) {
+                        System.out.println("Please select one of the following cards to refute:");
+                        for (var refuteCard : possibleRefutationCards) {
+                            System.out.println("- " + refuteCard);
+                        }
+                        String cardName = inputScanner.next();
+                        refutedCard = possibleRefutationCards.stream().filter(e -> e.toString().equals(cardName)).findFirst().orElse(null);
                     }
                 }
             }
