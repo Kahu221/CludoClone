@@ -8,4 +8,12 @@ public class PlayerCard extends Card {
     public PlayerCard(Player player) {
         this.player = player;
     }
+
+    public boolean equals(Card c) {
+        return c instanceof PlayerCard cx && cx.player.getCharacter().equals(player.getCharacter());
+    }
+
+    public String toString() {
+        return player.getCharacter().toString();
+    }
 }

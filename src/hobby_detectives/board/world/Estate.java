@@ -1,7 +1,7 @@
 package hobby_detectives.board.world;
 
 import hobby_detectives.data.Direction;
-import hobby_detectives.data.RoomType;
+import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
 import hobby_detectives.player.Player;
@@ -15,11 +15,11 @@ public class Estate extends Tile {
     public final int height;
     public final List<Position> doors;
     public final List<Direction> doorDirections;
-    public RoomType type;
+    public EstateType type;
     public WeaponType weapon;
     public List<Player> players = new ArrayList<>();
     public Estate(Position position, int width, int height,
-                  RoomType type,
+                  EstateType type,
                   WeaponType weapon,
                   List<Position> doors,
                   List<Direction> doorDirections

@@ -1,6 +1,6 @@
 package hobby_detectives.data;
 
-public enum RoomType {
+public enum EstateType {
     PERIL_PALACE,
     VISITATION_VILLA,
     CALAMITY_CASTLE,

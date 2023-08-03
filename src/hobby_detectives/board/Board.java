@@ -5,12 +5,10 @@ import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.Direction;
-import hobby_detectives.data.RoomType;
+import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
-import hobby_detectives.game.PlayerCard;
-import hobby_detectives.game.RoomCard;
-import hobby_detectives.game.WeaponCard;
+import hobby_detectives.game.*;
 import hobby_detectives.player.Player;
 
 import java.util.*;
@@ -20,10 +18,8 @@ public class Board {
     private final Random random = new Random();
     private final Queue<Player> players;
     private final List<Estate> estates;
-
-    private final PlayerCard correctPlayer;
-    private final WeaponCard correctWeapon;
-    private final RoomCard correctRoom;
+    private final CardTriplet correctTriplet;
+    private boolean gameRunning = true;
     private final Tile[][] board;
     private final Scanner inputScanner = new Scanner(System.in);
 
@@ -57,27 +53,27 @@ public class Board {
 
         // initialise estates
         estates = List.of(
-                new Estate(new Position(2, 2), 5, 5, RoomType.HAUNTED_HOUSE, weapons.remove(0),
+                new Estate(new Position(2, 2), 5, 5, EstateType.HAUNTED_HOUSE, weapons.remove(0),
                         List.of(new Position(4, 1), new Position(3, 4)),
                         List.of(Direction.RIGHT, Direction.DOWN)
                 ),
 
-                new Estate(new Position(2, 17), 5, 5, RoomType.CALAMITY_CASTLE, weapons.remove(0),
+                new Estate(new Position(2, 17), 5, 5, EstateType.CALAMITY_CASTLE, weapons.remove(0),
                         List.of(new Position(1, 0), new Position(4, 1)),
                         List.of(Direction.UP, Direction.RIGHT)
                         ),
 
-                new Estate(new Position(9, 10), 6, 4, RoomType.VISITATION_VILLA, weapons.remove(0),
+                new Estate(new Position(9, 10), 6, 4, EstateType.VISITATION_VILLA, weapons.remove(0),
                         List.of(new Position(0, 2), new Position(3, 0), new Position(2, 3), new Position(5, 1)),
                         List.of(Direction.LEFT, Direction.UP, Direction.DOWN, Direction.RIGHT)
                         ),
 
-                new Estate(new Position(17, 2), 5, 5, RoomType.MANIC_MANOR, weapons.remove(0),
+                new Estate(new Position(17, 2), 5, 5, EstateType.MANIC_MANOR, weapons.remove(0),
                         List.of(new Position(0, 3), new Position(3, 4)),
                         List.of(Direction.LEFT, Direction.DOWN)
                         ),
 
-                new Estate(new Position(17, 17), 5, 5, RoomType.PERIL_PALACE, weapons.remove(0),
+                new Estate(new Position(17, 17), 5, 5, EstateType.PERIL_PALACE, weapons.remove(0),
                         List.of(new Position(1, 0), new Position(0, 3)),
                         List.of(Direction.UP, Direction.LEFT)
                         )
@@ -90,15 +86,27 @@ public class Board {
             }
         }
 
-        this.correctPlayer = new PlayerCard(this.players.stream().toList().get(random.nextInt(0, this.players.size())));
-        this.correctRoom = new RoomCard(this.estates.get(random.nextInt(0, this.estates.size())).type);
-        this.correctWeapon = new WeaponCard(WeaponType.values()[random.nextInt(0, WeaponType.values().length)]);
-
         // initialise unreachable areas
         applyUnreachableArea(new Position(11, 5), 2, 2);
         applyUnreachableArea(new Position(5, 11), 2, 2);
         applyUnreachableArea(new Position(11, 17), 2, 2);
         applyUnreachableArea(new Position(17, 11), 2, 2);
+
+        // initialize cards and correct cards
+        List<PlayerCard> playerCards = this.players.stream().map(PlayerCard::new).toList();
+        Collections.shuffle(playerCards);
+        List<WeaponCard> weaponCards = Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList();
+        Collections.shuffle(weaponCards);
+        List<EstateCard> estateCards = estates.stream().map(estate -> new EstateCard(estate.type)).toList();
+        Collections.shuffle(estateCards);
+
+        correctTriplet = new CardTriplet(
+                weaponCards.remove(0),
+                estateCards.remove(0),
+                playerCards.remove(0)
+        );
+
+        int playerSize = this.players.size();
     }
 
     private void applyUnreachableArea(Position origin, int width, int height) {
@@ -120,7 +128,6 @@ public class Board {
         for (int col = 0; col < boardSize; col++) {
             for (int row = 0; row < boardSize; row++) {
                 System.out.print(this.board[row][col].render());
-
             }
             System.out.println("|");
         }
@@ -132,7 +139,7 @@ public class Board {
      * This method will block until the completion of the game.
      */
     public void runGame() {
-        while (true) {
+        while (gameRunning) {
             turn();
         }
     }
@@ -223,10 +230,11 @@ public class Board {
         //clear();
         Player player = this.players.poll();
         System.out.println("It is " + player.getCharacter().toString() + "'s turn to play.");
+
         var dice = random.nextInt(2, 13);
         draw();
         if (player.getTile() instanceof Estate e) {
-            System.out.println("You are currently in " + e.type + ".");
+            promptPlayerForGuess(player, e);
         }
         System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
         var input = inputScanner.nextLine();
@@ -246,6 +254,78 @@ public class Board {
         
         processInput(input, player);
         this.players.add(player);
+    }
+
+    public CardTriplet promptPlayerForCardTriplet(Player p) {
+        WeaponCard weaponGuessed = null;
+        while (weaponGuessed == null) {
+            System.out.println("Which weapon are you going to guess?");
+            for (Card w : p.getCards().stream().filter(e -> e instanceof WeaponCard).toList()) {
+                System.out.println("- " + ((WeaponCard) w).weapon);
+            }
+
+            var tWeaponGuessed = WeaponType.valueOf(inputScanner.next());
+            weaponGuessed = (WeaponCard) p.getCards().stream()
+                    .filter(e -> e instanceof WeaponCard ex && ex.weapon.equals(tWeaponGuessed))
+                    .findFirst().orElse(null);
+        }
+        EstateCard estateGuessed = null;
+        while (estateGuessed == null) {
+            System.out.println("What estate are you going to guess?");
+            for (Card e : p.getCards().stream().filter(e -> e instanceof EstateCard).toList()) {
+                System.out.println("- " + ((EstateCard) e).estate);
+            }
+
+            var tEstateGuessed = EstateType.valueOf(inputScanner.next());
+            estateGuessed = (EstateCard) p.getCards().stream()
+                    .filter(e -> e instanceof EstateCard ex && ex.estate.equals(tEstateGuessed))
+                    .findFirst().orElse(null);
+        }
+
+        PlayerCard characterGuessed = null;
+        while (characterGuessed == null) {
+            System.out.println("What character are you going to guess?");
+            for (Card e : p.getCards().stream().filter(e -> e instanceof PlayerCard).toList()) {
+                System.out.println("- " + ((PlayerCard) e).player);
+            }
+            var tCharacterGuessed = CharacterType.valueOf(inputScanner.next());
+            characterGuessed = (PlayerCard) p.getCards().stream()
+                    .filter(e -> e instanceof PlayerCard ex && ex.player.getCharacter().equals(tCharacterGuessed))
+                    .findFirst().orElse(null);
+        }
+
+        return new CardTriplet(weaponGuessed, estateGuessed, characterGuessed);
+    }
+
+    public void promptPlayerForGuess(Player p, Estate estate) {
+        System.out.println("You are in " + estate.type + ", which has the weapon " + estate.weapon + ".");
+        System.out.println("Would you like to make a guess? Type 'yes' to guess, and anything else to skip.");
+        var input = inputScanner.next().toLowerCase();
+        if (input.equals("yes") || input.equals("y")) {
+            CardTriplet triplet = promptPlayerForCardTriplet(p);
+
+            if (this.correctTriplet.equals(triplet)) {
+                System.out.println(p.getCharacter() + " has won the game!");
+                gameRunning = false;
+                return;
+            }
+
+            // Refutation
+            CharacterType[] guessOrder = {CharacterType.LUCINA, CharacterType.BERT, CharacterType.MALINA, CharacterType.PERCY};
+            for (CharacterType refuter : guessOrder) {
+                Player refuterPlayer = this.players.stream().filter(e -> e.getCharacter().equals(refuter)).findFirst().get();
+                if (!refuterPlayer.getAllowedToGuess()) continue;
+                System.out.println("It is " + refuter + "'s turn to refute.");
+                var possibleRefutationCards =
+                        refuterPlayer.getCards().stream().filter(refuterCard -> triplet.contains(refuterCard)).toList();
+                if (!possibleRefutationCards.isEmpty()) {
+                    System.out.println("Please select one of the following cards to refute:");
+                    for (var refuteCard : possibleRefutationCards) {
+                        System.out.println("- " + refuteCard);
+                    }
+                }
+            }
+        }
     }
 
     /**

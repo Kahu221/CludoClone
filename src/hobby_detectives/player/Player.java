@@ -12,9 +12,23 @@ public class Player {
     private Tile currentTile;
     private ArrayList<Card> cards;
 
+    private boolean allowedToGuess = true;
+
+    public boolean getAllowedToGuess() {
+        return allowedToGuess;
+    }
+
+    public void setAllowedToGuess(boolean n) {
+        allowedToGuess = n;
+    }
+
     public Player(CharacterType character) {
 
         this.character = character;
+    }
+
+    public ArrayList<Card> getCards() {
+        return this.cards;
     }
 
     public CharacterType getCharacter() {
@@ -27,5 +41,9 @@ public class Player {
 
     public void setTile(Tile t) {
         this.currentTile = t;
+    }
+
+    public String toString() {
+        return this.getCharacter().toString();
     }
 }
