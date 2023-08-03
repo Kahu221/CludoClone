@@ -93,11 +93,11 @@ public class Board {
         applyUnreachableArea(new Position(17, 11), 2, 2);
 
         // initialize cards and correct cards
-        List<PlayerCard> playerCards = this.players.stream().map(PlayerCard::new).toList();
+        List<PlayerCard> playerCards = new ArrayList<>(this.players.stream().map(PlayerCard::new).toList());
         Collections.shuffle(playerCards);
-        List<WeaponCard> weaponCards = Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList();
+        List<WeaponCard> weaponCards = new ArrayList<>(Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList());
         Collections.shuffle(weaponCards);
-        List<EstateCard> estateCards = estates.stream().map(estate -> new EstateCard(estate.type)).toList();
+        List<EstateCard> estateCards = new ArrayList<>(estates.stream().map(estate -> new EstateCard(estate.type)).toList());
         Collections.shuffle(estateCards);
 
         correctTriplet = new CardTriplet(
