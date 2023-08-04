@@ -19,6 +19,8 @@ public class Game {
     private final CardTriplet correctTriplet;
     private boolean running = false;
 
+    public Map<String, Card> allCards = new HashMap<>();
+
     public Game() {
         board = new Board(24, this);
         System.out.println("How many players are playing? (3 or 4)");
@@ -56,10 +58,15 @@ public class Game {
 
         // initialize cards and correct cards
         List<PlayerCard> playerCards = new ArrayList<>(Arrays.stream(CharacterType.values()).map(PlayerCard::new).toList());
+        for(Card c : playerCards) this.allCards.put(c.toString(), c);
         Collections.shuffle(playerCards);
+
         List<WeaponCard> weaponCards = new ArrayList<>(Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList());
         Collections.shuffle(weaponCards);
+        for(Card c : weaponCards) this.allCards.put(c.toString(), c);
+
         List<EstateCard> estateCards = new ArrayList<>(Arrays.stream(EstateType.values()).map(EstateCard::new).toList());
+        for(Card c : estateCards) this.allCards.put(c.toString(), c);
         Collections.shuffle(estateCards);
 
         correctTriplet = new CardTriplet(
@@ -82,40 +89,6 @@ public class Game {
 
 
         players = new ArrayDeque<>(playerSeeds);
-
-//        Bert (1,9)
-//        Lucina (11,1)
-//        Malina (9,22)
-//        Percy (22,14)
-
-
-//        Collections.shuffle(remainingCards);
-//
-//        var cardsPerPlayer = (int) Math.ceil(remainingCards.size() / (float) numPlayers);
-//
-//        var playerSeeds = new HashMap<Player, Position>();
-//        for (var playerEntry : playerSeeds.entrySet()) {
-//            this.players.add(playerEntry.getKey());
-//            board.read(playerEntry.getValue()).setPlayer(playerEntry.getKey());
-//            playerEntry.getKey().setTile(board.read(playerEntry.getValue()));
-//        }
-        /*
-        Starting positions:
-        Bert (1,9)
-        Lucina (11,1)
-        Malina (9,22)
-        Percy (22,14)
-
-                playerSeeds.put(new Player(CharacterType.BERT,
-                remainingCards.subList(0, Math.min(remainingCards.size(), cardsPerPlayer))), new Position(1, 9));
-        playerSeeds.put(new Player(CharacterType.LUCINA,
-                remainingCards.subList(cardsPerPlayer, Math.min(remainingCards.size(), cardsPerPlayer * 2))), new Position(11, 1));
-        playerSeeds.put(new Player(CharacterType.MALINA,
-                remainingCards.subList(cardsPerPlayer * 2, Math.min(remainingCards.size(), cardsPerPlayer * 3))), new Position(9, 22));
-        if (numPlayers == 4) playerSeeds.put(new Player(CharacterType.PERCY,
-                remainingCards.subList(cardsPerPlayer * 3, Math.min(remainingCards.size(), cardsPerPlayer * 4))), new Position(22, 14));
-
-         */
     }
 
     public void run() {
@@ -140,55 +113,35 @@ public class Game {
     }
 
 
-    public WeaponCard promptWeapon(Player p) {
+    public WeaponCard promptWeapon() {
         WeaponCard weaponGuessed = null;
         while (weaponGuessed == null) {
-            System.out.println("Which weapon are you going to guess?");
-            for (Card w : p.getCards().stream().filter(e -> e instanceof WeaponCard).toList()) {
-                System.out.println("- " + ((WeaponCard) w).weapon);
-            }
-
-            var tWeaponGuessed = WeaponType.valueOf(inputScanner.next().toUpperCase());
-            weaponGuessed = (WeaponCard) p.getCards().stream()
-                    .filter(e -> e instanceof WeaponCard ex && ex.weapon.equals(tWeaponGuessed))
-                    .findFirst().orElse(null);
+            System.out.println("Which weapon are you going to guess? (case sensitive)");
+            for(WeaponType w : WeaponType.values()) System.out.println("- " + w.toString());
+            weaponGuessed = (WeaponCard) allCards.getOrDefault( WeaponType.valueOf(inputScanner.next().toUpperCase()).toString(), null);
         }
         return weaponGuessed;
     }
 
-    public EstateCard promptEstate(Player p) {
+    public EstateCard promptEstate() {
         EstateCard estateGuessed = null;
         while (estateGuessed == null) {
-            System.out.println("What estate are you going to guess?");
-            for (Card e : p.getCards().stream().filter(e -> e instanceof EstateCard).toList()) {
-                System.out.println("- " + ((EstateCard) e).estate);
-            }
-
-            var tEstateGuessed = EstateType.valueOf(inputScanner.next().toUpperCase());
-            estateGuessed = (EstateCard) p.getCards().stream()
-                    .filter(e -> e instanceof EstateCard ex && ex.estate.equals(tEstateGuessed))
-                    .findFirst().orElse(null);
+            System.out.println("What estate are you going to guess? (case sensitive)");
+            for(EstateType e: EstateType.values()) System.out.println("- " + e.toString());
+            estateGuessed = (EstateCard)  allCards.getOrDefault(EstateType.valueOf(inputScanner.next().toUpperCase()).toString(), null);
         }
         return estateGuessed;
     }
 
-    public PlayerCard promptPlayer(Player p) {
+    public PlayerCard promptPlayer() {
         PlayerCard characterGuessed = null;
         while (characterGuessed == null) {
-            System.out.println("What character are you going to guess?");
-            for (Card e : p.getCards().stream().filter(e -> e instanceof PlayerCard).toList()) {
-                System.out.println("- " + e);
-            }
-            var tCharacterGuessed = CharacterType.valueOf(inputScanner.next().toUpperCase());
-            characterGuessed = (PlayerCard) p.getCards().stream()
-                    .filter(e -> e instanceof PlayerCard ex && ex.character.equals(tCharacterGuessed))
-                    .findFirst().orElse(null);
+
+           System.out.println("What character are you going to guess? (case sensitive)");
+           for(CharacterType pt : CharacterType.values()) System.out.println("- " + pt.toString());
+           characterGuessed = (PlayerCard) allCards.getOrDefault(CharacterType.valueOf(inputScanner.next().toUpperCase()).toString(),null);
         }
         return characterGuessed;
-    }
-
-    public CardTriplet promptPlayerForCardTriplet(Player p) {
-        return new CardTriplet(promptWeapon(p), promptEstate(p), promptPlayer(p));
     }
 
     public void changeTo(Player player) {
@@ -196,50 +149,68 @@ public class Game {
         inputScanner.nextLine();
     }
 
+    /**
+     * @param p current players turn
+     * @param estate current estate that this player is in
+     * @return a list of all the correct cards guessed in a game
+     */
     public void promptPlayerForGuess(Player p, Estate estate) {
         System.out.println("You are in " + estate.type + ", which has the weapon " + estate.weapon + ".");
         if (askBoolean("Would you like to make a guess? Type 'yes' to guess, and anything else to skip.")) {
-            WeaponCard weapon = promptWeapon(p);
-            PlayerCard player = promptPlayer(p);
+            WeaponCard weapon = promptWeapon();
+            PlayerCard player = promptPlayer();
 
             // Refutation
             var anyPlayerRefuted = false;
-            CharacterType[] guessOrder = {CharacterType.LUCINA, CharacterType.BERT, CharacterType.MALINA, CharacterType.PERCY};
-            for (CharacterType refuter : guessOrder) {
-                if (refuter.equals(p.getCharacter())) continue;
-                Player refuterPlayer = players.stream().filter(e -> e.getCharacter().equals(refuter)).findFirst().get();
-                if (!refuterPlayer.getAllowedToGuess()) continue;
-                var possibleRefutationCards =
-                        refuterPlayer.getCards().stream()
-                                .filter(refuterCard -> weapon == refuterCard || player == refuterCard || new EstateCard(estate.type).equals(refuterCard))
-                                .toList();
-                if (!possibleRefutationCards.isEmpty()) {
-                    changeTo(refuterPlayer);
-                    System.out.println("It is your turn to refute.");
-                    Card refutedCard = null;
-                    while (refutedCard == null) {
-                        System.out.println("Please select one of the following cards to refute:");
-                        for (var refuteCard : possibleRefutationCards) {
-                            System.out.println("- " + refuteCard);
-                        }
-                        String cardName = inputScanner.next().toUpperCase();
-                        refutedCard = possibleRefutationCards.stream().filter(e -> e.toString().equals(cardName)).findFirst().orElse(null);
-                        if (refutedCard != null) {
-                            anyPlayerRefuted = true;
-                        }
+            List<Card> refutedCards = new ArrayList<>();
+            Player firstRefute = players.peek();
+            Player currentRefute;
+
+            //after guess rotate through the players 1 by one checking weather they contain any cards made in the guess (containing a card will put it into the list etc...)
+            do{
+                currentRefute = players.poll();
+                System.out.println("it is " + currentRefute + "Turn to refute");
+                changeTo(currentRefute);
+                List<Card> containedCards = new ArrayList<>();
+                //can condense this but brain not work
+                for(Card c : currentRefute.getCards()) {
+                    if(c == weapon || c == player || c == allCards.get(estate.type.toString())) containedCards.add(c);
+                }
+                if(containedCards.size() == 0) {
+                    players.offer(currentRefute);
+                    continue;
+                }
+                //can only refute this card so must return
+                if(containedCards.size() == 1){
+                    players.offer(currentRefute);
+                    refutedCards.add(containedCards.get(0));
+                    continue;
+                }
+                //TODO needs to be tested that the picking card works
+                System.out.println("Please type a card to be refuted from the following:");
+                for(Card c : containedCards) System.out.println("- " + c.toString());
+                Card cardToRefute = null;
+                while (cardToRefute == null){
+                    cardToRefute = allCards.getOrDefault(inputScanner.next().toUpperCase(),null);
+                    //making sure the player cant just call any random card
+                    if(!containedCards.contains(cardToRefute)) {
+                        System.out.println("Please choose a card that is listed!");
+                        cardToRefute = null;
                     }
                 }
-            }
-            if (!anyPlayerRefuted) {
-                changeTo(p);
-                board.unrefutedCards.add(weapon);
-                board.unrefutedCards.add(player);
-                board.unrefutedCards.add(new EstateCard(estate.type));
-                if (askBoolean("Your guess was unrefuted. Would you like to attempt to solve, using your guess?")) {
-                    if (attemptSolve(p, new CardTriplet(weapon, new EstateCard(estate.type), player))) {
-                    }
+                containedCards.add(cardToRefute);
+                players.offer(currentRefute);
+            }while(players.peek() != firstRefute);
+            changeTo(p);
+            //if refuted cards are empty, allow for solve attempt
+            if(refutedCards.isEmpty()) {
+                if (askBoolean("Your guess was unrefuted, would you like to solve?")) {
+                    attemptSolve(p, new CardTriplet(promptWeapon(), promptEstate(), promptPlayer()));
                 }
             }
+            System.out.println("Your refuted cards are shown below\n--------------------");
+            for(Card c : refutedCards) System.out.println("- " + c.toString());
+            System.out.println("--------------------");
         }
     }
 
