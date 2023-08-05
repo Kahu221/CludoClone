@@ -133,12 +133,14 @@ public class Game {
         return estateGuessed;
     }
 
-    public PlayerCard promptPlayer() {
+    public PlayerCard promptPlayer(Player currentPlayer) {
         PlayerCard characterGuessed = null;
         while (characterGuessed == null) {
 
            System.out.println("What character are you going to guess? (case sensitive)");
-           for(CharacterType pt : CharacterType.values()) System.out.println("- " + pt.toString());
+           players.stream().filter(player -> !currentPlayer.equals(player))
+                   .forEach(player -> System.out.println("- " + player.getCharacter().toString()));
+
            characterGuessed = (PlayerCard) allCards.getOrDefault(CharacterType.valueOf(inputScanner.next().toUpperCase()).toString(),null);
         }
         return characterGuessed;
@@ -158,7 +160,7 @@ public class Game {
         System.out.println("You are in " + estate.type + ", which has the weapon " + estate.weapon + ".");
         if (askBoolean("Would you like to make a guess? Type 'yes' to guess, and anything else to skip.")) {
             WeaponCard weapon = promptWeapon();
-            PlayerCard player = promptPlayer();
+            PlayerCard player = promptPlayer(p);
 
             // Refutation
             var anyPlayerRefuted = false;
@@ -205,7 +207,7 @@ public class Game {
             //if refuted cards are empty, allow for solve attempt
             if(refutedCards.isEmpty()) {
                 if (askBoolean("Your guess was unrefuted, would you like to solve?")) {
-                    attemptSolve(p, new CardTriplet(promptWeapon(), promptEstate(), promptPlayer()));
+                    attemptSolve(p, new CardTriplet(promptWeapon(), promptEstate(), promptPlayer(p)));
                 }
             }
             System.out.println("Your refuted cards are shown below\n--------------------");
@@ -233,7 +235,6 @@ public class Game {
     public void turn() {
         Player player = players.poll();
         changeTo(player);
-        inputScanner.nextLine();
 
         var dice = random.nextInt(2, 13);
         board.draw();
