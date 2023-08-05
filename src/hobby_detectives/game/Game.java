@@ -118,7 +118,12 @@ public class Game {
         while (weaponGuessed == null) {
             System.out.println("Which weapon are you going to guess? (case sensitive)");
             for(WeaponType w : WeaponType.values()) System.out.println("- " + w.toString());
-            weaponGuessed = (WeaponCard) allCards.getOrDefault( WeaponType.valueOf(inputScanner.next().toUpperCase()).toString(), null);
+            String weaponType = "";
+            try {
+                weaponType = WeaponType.valueOf(inputScanner.next().toUpperCase()).toString();
+            } catch (Exception ignored) {}
+
+            weaponGuessed = (WeaponCard) allCards.getOrDefault(weaponType, null);
         }
         return weaponGuessed;
     }
@@ -128,7 +133,12 @@ public class Game {
         while (estateGuessed == null) {
             System.out.println("What estate are you going to guess? (case sensitive)");
             for(EstateType e: EstateType.values()) System.out.println("- " + e.toString());
-            estateGuessed = (EstateCard)  allCards.getOrDefault(EstateType.valueOf(inputScanner.next().toUpperCase()).toString(), null);
+            String estateType = "";
+            try {
+                estateType = EstateType.valueOf(inputScanner.next().toUpperCase()).toString();
+            } catch (Exception ignored) {}
+
+            estateGuessed = (EstateCard)  allCards.getOrDefault(estateType, null);
         }
         return estateGuessed;
     }
@@ -138,10 +148,14 @@ public class Game {
         while (characterGuessed == null) {
 
            System.out.println("What character are you going to guess? (case sensitive)");
-           players.stream().filter(player -> !currentPlayer.equals(player))
-                   .forEach(player -> System.out.println("- " + player.getCharacter().toString()));
+           Arrays.stream(CharacterType.values()).filter(type -> !currentPlayer.getCharacter().equals(type))
+                   .forEach(type -> System.out.println(type.toString()));
+           String characterType = "";
 
-           characterGuessed = (PlayerCard) allCards.getOrDefault(CharacterType.valueOf(inputScanner.next().toUpperCase()).toString(),null);
+           try {
+               characterType = CharacterType.valueOf(inputScanner.next().toUpperCase()).toString();
+           } catch (Exception ignored) {}
+           characterGuessed = (PlayerCard) allCards.getOrDefault(characterType,null);
         }
         return characterGuessed;
     }
@@ -168,7 +182,9 @@ public class Game {
             Player firstRefute = players.peek();
             Player currentRefute;
 
-            //after guess rotate through the players 1 by one checking weather they contain any cards made in the guess (containing a card will put it into the list etc...)
+            //after guess rotate through the players 1 by one checking weather they
+            //contain any cards made in the guess (containing a card will put it
+            // into the list etc...)
             do{
                 currentRefute = players.poll();
                 System.out.println("it is " + currentRefute + "Turn to refute");
