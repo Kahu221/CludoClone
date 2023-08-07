@@ -2,6 +2,9 @@ package hobby_detectives.game;
 
 import hobby_detectives.data.EstateType;
 
+/**
+ * Represents a card that indicates an estate.
+ */
 public class EstateCard extends Card {
     public final EstateType estate;
 

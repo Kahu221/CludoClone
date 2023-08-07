@@ -17,8 +17,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents the game board, holding data and logic that relates
+ * to the data on the board and drawing the board.
+ */
 public class Board {
     private final int boardSize;
+
+    /**
+     * Cards that have been guessed and not refuted.
+     */
     public final List<Card> unrefutedCards = new ArrayList<>();
     private final List<Estate> estates;
     private final Tile[][] board;
@@ -95,6 +103,9 @@ public class Board {
         }
     }
 
+    /**
+     * Draws the board to the screen.
+     */
     public void draw() {
         System.out.println("_________________________________________________");
         for (int col = 0; col < boardSize; col++) {
@@ -106,6 +117,9 @@ public class Board {
         System.out.println("\n_________________________________________________");
     }
 
+    /**
+     * Attempts to move a player into an estate using the translation position.
+     */
     public void tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e) {
         // Player is at a door.
         if (e.doors.stream().anyMatch(d -> d.add(e.getPosition()).equals(possibleTranslate))) {
@@ -126,6 +140,12 @@ public class Board {
         return this.board[p.x()][p.y()];
     }
 
+    /**
+     * Returns the position specified by a given input token.
+     * Does not perform validation that the returned position is valid on the game board.
+     *
+     * @return An empty optional if the input is invalid.
+     */
     public Optional<Position> getPosition(String input, Position position) {
         for(char token : input.toLowerCase().toCharArray()){
             switch(token){

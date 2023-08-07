@@ -7,13 +7,22 @@ import hobby_detectives.player.Player;
 
 import java.util.Optional;
 
+/**
+ * Represents a tile in the game world.
+ */
 public class Tile extends BoardObject {
+    /**
+     * The player currently occupying this tile.
+     */
     public Optional<Player> occupant = Optional.empty();
 
     public Tile(Position position) {
         super(position);
     }
 
+    /**
+     * Sets the player occupying this tile.
+     */
     public void setPlayer(Player p) {
         if (p == null) occupant = Optional.empty();
         else occupant = Optional.of(p);

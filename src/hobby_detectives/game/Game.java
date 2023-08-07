@@ -11,7 +11,13 @@ import hobby_detectives.player.Player;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * Holds the logic and data for the abstract game.
+ */
 public class Game {
+    /**
+     * The players in the game.
+     */
     public final Queue<Player> players;
     private final Board board;
     private final Scanner inputScanner = new Scanner(System.in);
@@ -19,6 +25,9 @@ public class Game {
     private final CardTriplet correctTriplet;
     private boolean running = false;
 
+    /**
+     * All cards in play.
+     */
     public Map<String, Card> allCards = new HashMap<>();
 
     public Game() {
@@ -91,6 +100,9 @@ public class Game {
         players = new ArrayDeque<>(playerSeeds);
     }
 
+    /**
+     * Runs the game. This method will block until the end of the game.
+     */
     public void run() {
         running = true;
         while (running) {
@@ -98,8 +110,12 @@ public class Game {
         }
     }
 
+    /**
+     * Asks the user for a boolean value, by continuously prompting the given prompt
+     * until a valid boolean value is entered.
+     */
     public boolean askBoolean(String prompt) {
-        Optional<Boolean> hasResult = Optional.ofNullable(null);
+        Optional<Boolean> hasResult = Optional.empty();
         while (hasResult.isEmpty()) {
             System.out.println(prompt);
             var input = inputScanner.next().toLowerCase();
@@ -113,6 +129,9 @@ public class Game {
     }
 
 
+    /**
+     * Prompts the user for a weapon.
+     */
     public WeaponCard promptWeapon() {
         WeaponCard weaponGuessed = null;
         while (weaponGuessed == null) {
@@ -128,6 +147,9 @@ public class Game {
         return weaponGuessed;
     }
 
+    /**
+     * Prompts the user for an estate.
+     */
     public EstateCard promptEstate() {
         EstateCard estateGuessed = null;
         while (estateGuessed == null) {
@@ -143,6 +165,9 @@ public class Game {
         return estateGuessed;
     }
 
+    /**
+     * Prompts the user for a player card.
+     */
     public PlayerCard promptPlayer(Player currentPlayer) {
         PlayerCard characterGuessed = null;
         while (characterGuessed == null) {
@@ -160,15 +185,20 @@ public class Game {
         return characterGuessed;
     }
 
+    /**
+     * Changes the current player to the specified player, by prompting the current player
+     * to pass the device to the next player.
+     */
     public void changeTo(Player player) {
         System.out.println("Pass the tablet to " + player + " and then press ENTER.");
         inputScanner.nextLine();
     }
 
     /**
-     * @param p current players turn
-     * @param estate current estate that this player is in
-     * @return a list of all the correct cards guessed in a game
+     * Prompts the player if they would like to make a guess, and then goes through
+     * the logic for making a guess.
+     * @param p The current player.
+     * @param estate The current estate that this player is in.
      */
     public void promptPlayerForGuess(Player p, Estate estate) {
         System.out.println("You are in " + estate.type + ", which has the weapon " + estate.weapon + ".");

@@ -6,6 +6,9 @@ import hobby_detectives.game.Card;
 
 import java.util.List;
 
+/**
+ * Represents a player in the game.
+ */
 public class Player {
     private final CharacterType character;
     //not aprt of original plan but i need this to figure out where tf the player is without looping over the entire baord and checking each tile
@@ -14,7 +17,7 @@ public class Player {
 
     private boolean allowedToGuess = true;
 
-    private String color;
+    private final String color;
 
     public boolean getAllowedToGuess() {
         return allowedToGuess;

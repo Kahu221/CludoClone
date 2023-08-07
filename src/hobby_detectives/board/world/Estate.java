@@ -1,24 +1,47 @@
 package hobby_detectives.board.world;
 
-import hobby_detectives.data.CharacterColors;
 import hobby_detectives.data.Direction;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
-import hobby_detectives.player.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents the top-left estate pointer.
+ */
 public class Estate extends Tile {
+    /**
+     * The width of the estate.
+     */
     public final int width;
+
+    /**
+     * The height of the estate.
+     */
     public final int height;
+
+    /**
+     * All doors in the estate, expressed as relative positions to the estate's position.
+     */
     public final List<Position> doors;
+
+    /**
+     * The directions of which doors can be found.
+     */
     public final List<Direction> doorDirections;
+
+    /**
+     * The type of this estate.
+     */
     public EstateType type;
+
+    /**
+     * The weapon in this estate.
+     */
     public WeaponType weapon;
-    public List<Player> players = new ArrayList<>();
     public Estate(Position position, int width, int height,
                   EstateType type,
                   WeaponType weapon,
@@ -54,6 +77,9 @@ public class Estate extends Tile {
         return fills;
     }
 
+    /**
+     * Represents a 'fill tile', that is, all tiles in an estate that are not the top-left corner.
+     */
     public class EstateFillTile extends Tile {
         public final Estate parent;
 
