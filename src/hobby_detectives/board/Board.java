@@ -126,7 +126,14 @@ public class Board {
             if (e.occupant.isEmpty()) {
                 e.setPlayer(p);
                 p.setTile(e);
-                p.getCards().add(new WeaponCard(e.weapon));
+
+                WeaponCard newWeaponCard = new WeaponCard(e.weapon);
+                boolean weaponAlreadyInHand = p.getCards().stream()
+                        .anyMatch(card -> card.equals(newWeaponCard));
+                if(!weaponAlreadyInHand) {
+                    p.getCards().add(newWeaponCard);
+                }
+
                 game.promptPlayerForGuess(p, e);
             }
         }
@@ -148,7 +155,7 @@ public class Board {
      */
     public Optional<Position> getPosition(String input, Position position) {
         for(char token : input.toLowerCase().toCharArray()){
-            switch(token){
+            switch(token) {
                 case 'l' -> position = new Position(position.x() - 1, position.y());
                 case 'r' -> position = new Position(position.x() + 1, position.y());
                 case 'u' -> position = new Position(position.x(), position.y() - 1);

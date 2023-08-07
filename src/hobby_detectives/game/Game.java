@@ -118,7 +118,7 @@ public class Game {
         Optional<Boolean> hasResult = Optional.empty();
         while (hasResult.isEmpty()) {
             System.out.println(prompt);
-            var input = inputScanner.next().toLowerCase();
+            var input = scannerNext().toLowerCase();
             if (input.equals("true") || input.equals("t") || input.equals("yes") || input.equals("y")) {
                 hasResult = Optional.of(true);
             } else if (input.equals("false") || input.equals("f") || input.equals("no") || input.equals("n")) {
@@ -139,7 +139,7 @@ public class Game {
             for(WeaponType w : WeaponType.values()) System.out.println("- " + w.toString());
             String weaponType = "";
             try {
-                weaponType = WeaponType.valueOf(inputScanner.next().toUpperCase()).toString();
+                weaponType = WeaponType.valueOf(scannerNext().toUpperCase()).toString();
             } catch (Exception ignored) {}
 
             weaponGuessed = (WeaponCard) allCards.getOrDefault(weaponType, null);
@@ -157,7 +157,7 @@ public class Game {
             for(EstateType e: EstateType.values()) System.out.println("- " + e.toString());
             String estateType = "";
             try {
-                estateType = EstateType.valueOf(inputScanner.next().toUpperCase()).toString();
+                estateType = EstateType.valueOf(scannerNext().toUpperCase()).toString();
             } catch (Exception ignored) {}
 
             estateGuessed = (EstateCard)  allCards.getOrDefault(estateType, null);
@@ -178,7 +178,7 @@ public class Game {
            String characterType = "";
 
            try {
-               characterType = CharacterType.valueOf(inputScanner.next().toUpperCase()).toString();
+               characterType = CharacterType.valueOf(scannerNext().toUpperCase()).toString();
            } catch (Exception ignored) {}
            characterGuessed = (PlayerCard) allCards.getOrDefault(characterType,null);
         }
@@ -191,9 +191,26 @@ public class Game {
      */
     public void changeTo(Player player) {
         System.out.println("Pass the tablet to " + player + " and then press ENTER.");
-        inputScanner.nextLine();
+        scannerNewLine();
     }
 
+    /** Method to create and close() a new instance of a Scanner for newLine input purposes
+     * Solves bugs and crashes caused by Scanner not being cleared from previous usage
+     * @return the output of the Scanner
+     */
+    public String scannerNewLine() {
+        Scanner newInputScanner = new Scanner(System.in);
+        return newInputScanner.nextLine();
+    }
+
+    /** Method to create and close() a new instance of a Scanner for next() input purposes
+     * Solves bugs and crashes caused by Scanner not being cleared from previous usage
+     * @return the output of the Scanner
+     */
+    public String scannerNext() {
+        Scanner newInputScanner = new Scanner(System.in);
+        return newInputScanner.next();
+    }
     /**
      * Prompts the player if they would like to make a guess, and then goes through
      * the logic for making a guess.
@@ -217,8 +234,9 @@ public class Game {
             // into the list etc...)
             do{
                 currentRefute = players.poll();
-                System.out.println("it is " + currentRefute + "Turn to refute");
+                System.out.println("It is " + currentRefute + "'s turn to refute");
                 changeTo(currentRefute);
+                board.draw();
                 List<Card> containedCards = new ArrayList<>();
                 //can condense this but brain not work
                 for(Card c : currentRefute.getCards()) {
@@ -239,7 +257,7 @@ public class Game {
                 for(Card c : containedCards) System.out.println("- " + c.toString());
                 Card cardToRefute = null;
                 while (cardToRefute == null){
-                    cardToRefute = allCards.getOrDefault(inputScanner.next().toUpperCase(),null);
+                    cardToRefute = allCards.getOrDefault(scannerNext().toUpperCase(),null);
                     //making sure the player cant just call any random card
                     if(!containedCards.contains(cardToRefute)) {
                         System.out.println("Please choose a card that is listed!");
@@ -282,19 +300,27 @@ public class Game {
         Player player = players.poll();
         changeTo(player);
 
-        var dice = random.nextInt(2, 13);
+        var firstDice = random.nextInt(1, 6);
+        var secondDice = random.nextInt(1, 6);
+        var dice = firstDice + secondDice;
+
         board.draw();
         System.out.println("You have the following cards: " + player.getCards());
 
         if (player.getTile() instanceof Estate e) {
             promptPlayerForGuess(player, e);
+
+            if(!askBoolean("Would you like to leave?")) {
+                this.players.add(player);
+                return;
+            }
         }
         System.out.println("You have rolled " + dice + ". Type your moves as a string, i.e. 'LLUUR' for left-left-up-up-right.");
-        var input = inputScanner.nextLine();
+        var input = scannerNewLine();
 
         while (invalidInput(input, player, dice)) {
             System.out.println("Please re-enter");
-            input = inputScanner.nextLine();
+            input = scannerNewLine();
         }
 
         processInput(input, player);
@@ -380,19 +406,20 @@ public class Game {
      */
     public boolean invalidInput(String input, Player player, int dice) {
         input = input.toLowerCase();
-        Optional<Position> positionOptional = board.getPosition(input, player.getTile().getPosition());
 
-        if (input.length() > dice) {
+        if (input.length() > dice || input.length() == 0) {
             System.out.println("That is not the correct length. Your input must have " + dice + " or less inputs");
             return true;
         }
+
+        Optional<Position> positionOptional = board.getPosition(input, player.getTile().getPosition());
 
         if (player.getTile() instanceof Estate e) {
             List<Character> possibleDirections = e.doorDirections.stream().map(Direction::label).toList();
             Character directionPlayerWantsToLeaveEstate = input.charAt(0);
 
             if (!possibleDirections.contains(directionPlayerWantsToLeaveEstate)) {
-                System.out.println("You cannot exit " + e + " in that direction");
+                System.out.println("You cannot exit " + e.type.toString() + " in that direction");
                 return true;
             }
         }
