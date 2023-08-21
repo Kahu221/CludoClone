@@ -6,4 +6,5 @@
  *
  */
 module hobby_detectives {
+    requires java.desktop;
 }
