@@ -1,0 +1,26 @@
+class DetectivesGameSM {  
+  game {
+    game_setup {
+      start_game_button_clicked -> map_view;
+    }
+    
+    map_view {
+  	  clicks_on_estate -> guess_popup;
+      clicks_exit_button -> exited;
+      
+      finish_turn_btn_click -> waiting_for_next_player;
+    }
+    
+    guess_popup {
+      entry / { System.out.println("Render popup"); }
+      confirm -> waiting_for_next_player;
+      cancel -> waiting_for_next_player;
+    }
+    
+    exited {}
+    
+    waiting_for_next_player {
+      player_confirms_presence -> map_view;
+    }
+  }
+}
