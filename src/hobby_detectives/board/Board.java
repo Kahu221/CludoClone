@@ -12,6 +12,7 @@ import hobby_detectives.game.Game;
 import hobby_detectives.game.WeaponCard;
 import hobby_detectives.player.Player;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

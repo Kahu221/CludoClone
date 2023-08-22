@@ -1,11 +1,10 @@
 package hobby_detectives.gui;
 import hobby_detectives.gui.status.StatusPanel;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 public class GameFrame extends JFrame {
+
     public void start() {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(1000,800);

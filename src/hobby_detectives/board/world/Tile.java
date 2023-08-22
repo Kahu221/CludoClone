@@ -5,6 +5,7 @@ import hobby_detectives.engine.BoardObject;
 import hobby_detectives.engine.Position;
 import hobby_detectives.player.Player;
 
+import javax.swing.*;
 import java.util.Optional;
 
 /**
@@ -32,6 +33,12 @@ public class Tile extends BoardObject {
     public String render() {
         if (occupant.isPresent()) return "|" + occupant.get().getColor() + occupant.get().getCharacter().toString().charAt(0) + CharacterColors.RESET.getColor();
         return "|_";
+    }
+
+    //can change in future
+    public JLabel renderJLabel() {
+        if (occupant.isPresent()) return new JLabel("|" + occupant.get().getColor() + occupant.get().getCharacter().toString().charAt(0) + CharacterColors.RESET.getColor());
+        return new JLabel("|_");
     }
 
     @Override

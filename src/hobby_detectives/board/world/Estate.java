@@ -5,6 +5,7 @@ import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,9 @@ public class Estate extends Tile {
         return "|" + this.type.name().charAt(0);
     }
 
+    public JLabel renderJlabel() {
+        return new JLabel("|" + this.type.name().charAt(0));
+    }
     /**
      * This method generates the "fill tiles" for an estate, because an estate is a multi-tile block.
      * Estates are always positioned in the top-left corner (origin), and fan out to fill the multi-tile area.
