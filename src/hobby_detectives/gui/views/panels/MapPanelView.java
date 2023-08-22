@@ -2,6 +2,7 @@ package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.engine.Position;
+import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 
 import java.awt.*;
@@ -17,10 +18,12 @@ import javax.swing.*;
  */
 public class MapPanelView extends JPanel implements PropertyChangeListener {
     private final GameModel model;
+    private final GameController controller;
 
-    public MapPanelView(GameModel model) {
+    public MapPanelView(GameModel model, GameController controller) {
         this.setLayout(new GridLayout(24,24));
         this.model = model;
+        this.controller = controller;
         this.model.addPropertyChangeListener(this);
         this.add(new JLabel("Map panel"));
     }
@@ -43,7 +46,8 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
         var board = this.model.getBoard();
         for(int r = 0 ; r < 24 ; r++){
             for(int c = 0 ; c < 24 ; c++){
-                Tile current = board.read(new Position(r,c));
+                final var currentPosition = new Position(r,c);
+                Tile current = board.read(currentPosition);
 
                 var tileOnBoard = new JButton("");
 
@@ -59,11 +63,8 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
                     case "b", "l", "p", "m" -> tileOnBoard.setBackground(Color.pink);
                 }
                 tileOnBoard.setBorder(null);
-                int finalR = r;
-                int finalC = c;
                 tileOnBoard.addActionListener(onclick -> {
-                    // TODO send something to controller
-                    System.out.println("tile clicked at " + finalR +"   "+ finalC);
+                    controller.tryMovePlayer(currentPosition);
                 });
 
                 this.add(tileOnBoard);

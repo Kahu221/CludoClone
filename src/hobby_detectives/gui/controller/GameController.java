@@ -1,4 +1,5 @@
 package hobby_detectives.gui.controller;
+import hobby_detectives.engine.Position;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.panels.PromptExitView;
 import hobby_detectives.gui.views.GameView;
@@ -66,6 +67,10 @@ public class GameController {
      */
     public void startPlayerTurn() {
         this.model.rollDice();
+    }
+
+    public void tryMovePlayer(Position p) {
+
     }
 //
 //    public void promptPlayerForGuess(Player p, Estate estate) {}

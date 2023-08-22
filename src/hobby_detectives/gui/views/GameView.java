@@ -29,7 +29,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
         this.model = model;
         this.controller = controller;
         statusPanel = new StatusPanelView(model);
-        mapView = new MapPanelView(model);
+        mapView = new MapPanelView(model, controller);
         this.model.addPropertyChangeListener(this);
 
         acknowledgePresence = new JButton("Please pass the tablet to " + this.model.getCurrentPlayer().getCharacter().toString());
