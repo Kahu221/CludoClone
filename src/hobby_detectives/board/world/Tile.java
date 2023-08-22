@@ -31,7 +31,7 @@ public class Tile extends BoardObject {
 
     @Override
     public String render() {
-        if (occupant.isPresent()) return Character.toString(occupant.get().getCharacter().toString().charAt(0));
+        if (occupant.isPresent()) return Character.toString(occupant.get().getCharacter().toString().toLowerCase().charAt(0));
         return "_";
     }
 

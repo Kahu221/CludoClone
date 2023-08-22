@@ -1,5 +1,6 @@
 package hobby_detectives.gui.panels;
 
+import hobby_detectives.board.world.Tile;
 import hobby_detectives.engine.Position;
 import hobby_detectives.game.GameModel;
 
@@ -28,16 +29,30 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
         var board = this.model.getBoard();
         for(int r = 0 ; r < 24 ; r++){
             for(int c = 0 ; c < 24 ; c++){
-                var tile = new JButton(board.read(new Position(r,c)).render());
-                tile.setBorder(null);
+                Tile current = board.read(new Position(r,c));
+
+                var tileOnBoard = new JButton("");
+
+                switch(current.render()){
+                    case "*" -> tileOnBoard.setBackground(new Color(131,84,15));
+                    case "_" -> tileOnBoard.setBackground(new Color(0,153,0));
+                    case "#" -> tileOnBoard.setBackground(Color.darkGray);
+                    case "H" -> tileOnBoard.setBackground(Color.orange);
+                    case "C" -> tileOnBoard.setBackground(Color.blue);
+                    case "P" -> tileOnBoard.setBackground(Color.cyan);
+                    case "M" -> tileOnBoard.setBackground(Color.magenta);
+                    case "V" -> tileOnBoard.setBackground(Color.YELLOW);
+                    case "b", "l", "p", "m" -> tileOnBoard.setBackground(Color.pink);
+                }
+                tileOnBoard.setBorder(null);
                 int finalR = r;
                 int finalC = c;
-                tile.addActionListener(onclick -> {
+                tileOnBoard.addActionListener(onclick -> {
                     // TODO send something to controller
                     System.out.println("tile clicked at " + finalR + finalC);
                 });
 
-                this.add(tile);
+                this.add(tileOnBoard);
             }
         }
     }
