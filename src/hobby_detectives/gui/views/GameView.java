@@ -22,6 +22,8 @@ public class GameView extends JFrame implements PropertyChangeListener {
     public final StatusPanelView statusPanel;
     public final MapPanelView mapView;
 
+    private final JMenuBar menuBar;
+
     private final JButton acknowledgePresence;
 
     public GameView(GameModel model, GameController controller) {
@@ -52,6 +54,16 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
         this.setLocationRelativeTo(null); // centers the window in the center of the screen
         this.setVisible(true);
+
+        menuBar = new JMenuBar();
+
+        var game = new JMenu("Game");
+        var exit = new JMenuItem("Exit");
+        exit.addActionListener(e -> { this.controller.promptForGameExit(); });
+        game.add(exit);
+        menuBar.add(game);
+
+        this.setJMenuBar(menuBar);
     }
 
     public void propertyChange(PropertyChangeEvent event) {
