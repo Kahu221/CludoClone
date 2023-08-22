@@ -22,7 +22,7 @@ public class GameController {
     }
 
     public void promptForGameExit() {
-        var view = new PromptExitView();
+        var view = new PromptExitView(gameView);
         // PromptExitView disposes itself if cancelled,
         // and the program terminates if not,
         // so we don't need to do anything here
