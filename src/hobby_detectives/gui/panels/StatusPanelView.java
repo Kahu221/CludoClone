@@ -1,8 +1,7 @@
 package hobby_detectives.gui.panels;
 
-import hobby_detectives.gui.models.StatusPanelModel;
+import hobby_detectives.game.GameModel;
 
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -10,9 +9,9 @@ import javax.swing.*;
 
 public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JLabel currentPlayer = new JLabel("Loading");
-    private final StatusPanelModel model;
+    private final GameModel model;
 
-    public StatusPanelView(StatusPanelModel model) {
+    public StatusPanelView(GameModel model) {
         this.model = model;
         this.model.addPropertyChangeListener(this);
         draw();
@@ -24,7 +23,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void draw() {
-        currentPlayer.setText(this.model.getCharacterName());
+        this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
     }
 
 }

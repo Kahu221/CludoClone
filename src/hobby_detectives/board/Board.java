@@ -8,11 +8,10 @@ import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
 import hobby_detectives.game.Card;
-import hobby_detectives.game.Game;
+import hobby_detectives.game.GameModel;
 import hobby_detectives.game.WeaponCard;
 import hobby_detectives.player.Player;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +30,10 @@ public class Board {
     public final List<Card> unrefutedCards = new ArrayList<>();
     private final List<Estate> estates;
     private final Tile[][] board;
-    private final Game game;
+    private final GameModel game;
 
     //remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
-    public Board(int boardSize, Game game) {
+    public Board(int boardSize, GameModel game) {
         this.game = game;
         this.boardSize = boardSize;
         this.board = new Tile[boardSize][boardSize];
@@ -135,7 +134,7 @@ public class Board {
                     p.getCards().add(newWeaponCard);
                 }
 
-                game.promptPlayerForGuess(p, e);
+                //game.promptPlayerForGuess(p, e);
             }
         }
     }
