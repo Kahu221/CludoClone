@@ -1,4 +1,5 @@
 package hobby_detectives.gui.controller;
+import hobby_detectives.gui.panels.PromptExitView;
 import hobby_detectives.gui.views.GameView;
 import hobby_detectives.game.*;
 
@@ -21,7 +22,10 @@ public class GameController {
     }
 
     public void promptForGameExit() {
-
+        var view = new PromptExitView();
+        // PromptExitView disposes itself if cancelled,
+        // and the program terminates if not,
+        // so we don't need to do anything here
     }
 
     /**
