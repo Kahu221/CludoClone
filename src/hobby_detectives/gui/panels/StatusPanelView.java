@@ -9,6 +9,7 @@ import javax.swing.*;
 
 public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JLabel currentPlayer = new JLabel("Loading");
+    private final JLabel currentDiceroll = new JLabel("Loading");
     private final GameModel model;
 
     public StatusPanelView(GameModel model) {
@@ -16,6 +17,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.model.addPropertyChangeListener(this);
         draw();
         this.add(currentPlayer);
+        this.add(currentDiceroll);
     }
 
     public void propertyChange(PropertyChangeEvent event) {
@@ -24,5 +26,8 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
     public void draw() {
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
+        this.currentDiceroll.setText("Your dice roll: " + this.model.getDiceRoll());
+        this.revalidate();
+        this.repaint();
     }
 }

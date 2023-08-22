@@ -42,10 +42,15 @@ public class GameController {
 //
     public void confirmPlayerChange() {
         this.model.setWaitingForPlayer(false);
+        startPlayerTurn();
     }
 
     public void changePlayer(){
         //poll and push
+    }
+
+    public void startPlayerTurn() {
+        this.model.rollDice();
     }
 //
 //    public void promptPlayerForGuess(Player p, Estate estate) {}
