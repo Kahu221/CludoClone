@@ -1,10 +1,11 @@
-package hobby_detectives.game;
+package hobby_detectives.gui.models;
 
 import hobby_detectives.board.Board;
 import hobby_detectives.board.world.Estate;
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.data.*;
 import hobby_detectives.engine.Position;
+import hobby_detectives.game.*;
 import hobby_detectives.player.Player;
 
 import java.beans.PropertyChangeListener;

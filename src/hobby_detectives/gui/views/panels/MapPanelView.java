@@ -1,8 +1,8 @@
-package hobby_detectives.gui.panels;
+package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.board.world.Tile;
 import hobby_detectives.engine.Position;
-import hobby_detectives.game.GameModel;
+import hobby_detectives.gui.models.GameModel;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -10,6 +10,11 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
 
+/**
+ * This view is responsible for rendering the map, which takes up the majority of the screen.
+ * It also handles user inputs and forwards them to the GameController,
+ * and deals with other user events.
+ */
 public class MapPanelView extends JPanel implements PropertyChangeListener {
     private final GameModel model;
 
@@ -20,10 +25,19 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
         this.add(new JLabel("Map panel"));
     }
 
+    /**
+     *
+     * @param event A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     public void propertyChange(PropertyChangeEvent event) {
        redraw();
     }
 
+    /**
+     * Redraws the board by removing all the tiles and then adding them back and
+     * setting the color of each tile (each "Tile" is a JButton)
+     */
     public void redraw(){
         this.removeAll();
         var board = this.model.getBoard();

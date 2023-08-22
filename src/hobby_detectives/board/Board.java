@@ -8,7 +8,7 @@ import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
 import hobby_detectives.game.Card;
-import hobby_detectives.game.GameModel;
+import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.game.WeaponCard;
 import hobby_detectives.player.Player;
 

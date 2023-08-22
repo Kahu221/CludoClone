@@ -1,14 +1,13 @@
 package hobby_detectives.gui.views;
 import hobby_detectives.gui.controller.GameController;
-import hobby_detectives.game.GameModel;
-import hobby_detectives.gui.panels.MapPanelView;
-import hobby_detectives.gui.panels.StatusPanelView;
+import hobby_detectives.gui.models.GameModel;
+import hobby_detectives.gui.views.panels.MapPanelView;
+import hobby_detectives.gui.views.panels.StatusPanelView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

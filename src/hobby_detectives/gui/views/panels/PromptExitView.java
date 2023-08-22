@@ -1,10 +1,14 @@
-package hobby_detectives.gui.panels;
+package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.gui.views.GameView;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * This view is responsible for rendering the confirm-exit dialog, which opens
+ * when the user tries to exit the game, or clicks Game->Exit in the menu bar.
+ */
 public class PromptExitView {
     public PromptExitView(GameView gv) {
         var frame = new JDialog(gv, "Confirm exit");
