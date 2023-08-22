@@ -55,7 +55,7 @@ public class GameModel {
     private final Board board;
     public Board getBoard() { return this.board; }
     public void notifyBoardUpdate() {
-        this.observable.firePropertyChange("board", board, board);
+        this.observable.firePropertyChange("board", null, board);
     }
 
     private int diceRoll = 0;

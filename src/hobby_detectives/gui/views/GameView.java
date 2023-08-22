@@ -72,18 +72,17 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 if ((Boolean) event.getNewValue()) {
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
+                    this.acknowledgePresence.setText("Please pass the tablet to " + this.model.getCurrentPlayer().getCharacter().toString());
 
                     // show the "please pass to x" screen
                     this.add(acknowledgePresence);
-                    this.revalidate();
-                    this.repaint();
                 } else {
                     this.remove(this.acknowledgePresence);
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
-                    this.revalidate();
-                    this.repaint();
                 }
+                this.revalidate();
+                this.repaint();
             }
 
         }

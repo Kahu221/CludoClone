@@ -1,6 +1,7 @@
 package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.board.world.Tile;
+import hobby_detectives.data.CharacterColors;
 import hobby_detectives.engine.Position;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
@@ -42,6 +43,7 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
      * setting the color of each tile (each "Tile" is a JButton)
      */
     public void redraw(){
+        System.out.println("Redrawing map");
         this.removeAll();
         var board = this.model.getBoard();
         for(int r = 0 ; r < 24 ; r++){
@@ -51,16 +53,26 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
 
                 var tileOnBoard = new JButton("");
 
-                switch(current.render()){
-                    case "*" -> tileOnBoard.setBackground(new Color(131,84,15));
-                    case "_" -> tileOnBoard.setBackground(new Color(0,153,0));
-                    case "#" -> tileOnBoard.setBackground(Color.darkGray);
-                    case "H" -> tileOnBoard.setBackground(Color.orange);
-                    case "C" -> tileOnBoard.setBackground(Color.blue);
-                    case "P" -> tileOnBoard.setBackground(Color.cyan);
-                    case "M" -> tileOnBoard.setBackground(Color.magenta);
-                    case "V" -> tileOnBoard.setBackground(Color.YELLOW);
-                    case "b", "l", "p", "m" -> tileOnBoard.setBackground(Color.pink);
+                if (current.occupant.isPresent()) {
+                    var color = switch (current.occupant.get().getCharacter()) {
+                        case LUCINA -> Color.PINK;
+                        case BERT -> Color.YELLOW;
+                        case MALINA -> Color.ORANGE;
+                        case PERCY -> Color.RED;
+                    };
+                    tileOnBoard.setBackground(color);
+                }
+                else {
+                    switch(current.render()){
+                        case "*" -> tileOnBoard.setBackground(new Color(131,84,15));
+                        case "_" -> tileOnBoard.setBackground(new Color(0,153,0));
+                        case "#" -> tileOnBoard.setBackground(Color.darkGray);
+                        case "H" -> tileOnBoard.setBackground(Color.orange);
+                        case "C" -> tileOnBoard.setBackground(Color.blue);
+                        case "P" -> tileOnBoard.setBackground(Color.cyan);
+                        case "M" -> tileOnBoard.setBackground(Color.magenta);
+                        case "V" -> tileOnBoard.setBackground(Color.YELLOW);
+                    }
                 }
                 tileOnBoard.setBorder(null);
                 tileOnBoard.addActionListener(onclick -> {
@@ -70,5 +82,8 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
                 this.add(tileOnBoard);
             }
         }
+
+        this.revalidate();
+        this.repaint();
     }
 }
