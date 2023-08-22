@@ -1,11 +1,13 @@
 package hobby_detectives.gui.panels;
 
+import hobby_detectives.gui.views.GameView;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class PromptExitView {
-    public PromptExitView() {
-        var frame = new JFrame();
+    public PromptExitView(GameView gv) {
+        var frame = new JDialog(gv, "Confirm exit");
         frame.setLayout(new FlowLayout());
         frame.getContentPane().add(new JLabel("Are you sure you want to exit Hobby Detectives?"));
         var confirm = new JButton("Confirm");
@@ -22,7 +24,7 @@ public class PromptExitView {
         frame.getContentPane().add(confirm);
         frame.getContentPane().add(cancel);
 
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(gv);
         frame.pack();
         frame.setVisible(true);
     }
