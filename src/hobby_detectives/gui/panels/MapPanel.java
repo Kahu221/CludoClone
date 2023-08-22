@@ -2,14 +2,18 @@ package hobby_detectives.gui.panels;
 
 import hobby_detectives.game.Game;
 
+import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.*;
 
 public class MapPanel extends JPanel {
     //private final JLabel icons[][];
-    private Game game;
-    public MapPanel(Game game) {
+    
+    public MapPanel() {
         this.add(new JLabel("Map panel"));
-        this.game = game;
+        this.setBackground(Color.BLACK);
 
+        
     }
 }
