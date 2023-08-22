@@ -97,26 +97,6 @@ public class Board {
         }
     }
 
-    private static void clear() {
-        for (int clear = 0; clear < 1000; clear++) {
-            System.out.println("\b");
-        }
-    }
-
-    /**
-     * Draws the board to the screen.
-     */
-    public void draw() {
-        System.out.println("_________________________________________________");
-        for (int col = 0; col < boardSize; col++) {
-            for (int row = 0; row < boardSize; row++) {
-                System.out.print(this.board[row][col].render());
-            }
-            System.out.println("|");
-        }
-        System.out.println("\n_________________________________________________");
-    }
-
     /**
      * Attempts to move a player into an estate using the translation position.
      */

@@ -1,6 +1,6 @@
 package hobby_detectives;
 
-import hobby_detectives.controller.GameController;
+import hobby_detectives.gui.controller.GameController;
 
 import javax.swing.*;
 

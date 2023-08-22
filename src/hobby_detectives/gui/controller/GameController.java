@@ -1,4 +1,4 @@
-package hobby_detectives.controller;
+package hobby_detectives.gui.controller;
 import hobby_detectives.gui.views.GameView;
 import hobby_detectives.game.*;
 
@@ -18,6 +18,10 @@ public class GameController {
      */
     public void start() {
         this.model.setWaitingForPlayer(true);
+    }
+
+    public void promptForGameExit() {
+
     }
 
     /**

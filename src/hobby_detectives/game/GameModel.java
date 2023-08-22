@@ -30,7 +30,6 @@ public class GameModel {
      * The players in the game.
      */
     public final Queue<Player> players;
-    private final Board board;
     private final Scanner inputScanner = new Scanner(System.in);
     private final Random random = new Random();
     private final CardTriplet correctTriplet;
@@ -50,6 +49,12 @@ public class GameModel {
         boolean old = waitingForPlayer;
         this.waitingForPlayer = wfp;
         this.observable.firePropertyChange("waitingForPlayer", old, wfp);
+    }
+
+    private final Board board;
+    public Board getBoard() { return this.board; }
+    public void notifyBoardUpdate() {
+        this.observable.firePropertyChange("board", board, board);
     }
 
     /**

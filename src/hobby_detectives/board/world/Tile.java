@@ -31,14 +31,8 @@ public class Tile extends BoardObject {
 
     @Override
     public String render() {
-        if (occupant.isPresent()) return "|" + occupant.get().getColor() + occupant.get().getCharacter().toString().charAt(0) + CharacterColors.RESET.getColor();
-        return "|_";
-    }
-
-    //can change in future
-    public JLabel renderJLabel() {
-        if (occupant.isPresent()) return new JLabel("|" + occupant.get().getColor() + occupant.get().getCharacter().toString().charAt(0) + CharacterColors.RESET.getColor());
-        return new JLabel("|_");
+        if (occupant.isPresent()) return Character.toString(occupant.get().getCharacter().toString().charAt(0));
+        return "_";
     }
 
     @Override

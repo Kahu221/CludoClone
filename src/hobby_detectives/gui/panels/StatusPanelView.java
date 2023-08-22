@@ -25,5 +25,4 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     public void draw() {
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
     }
-
 }

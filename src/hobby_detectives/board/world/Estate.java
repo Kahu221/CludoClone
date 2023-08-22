@@ -60,7 +60,7 @@ public class Estate extends Tile {
 
     @Override
     public String render() {
-        return "|" + this.type.name().charAt(0);
+        return Character.toString(this.type.name().charAt(0));
     }
 
     public JLabel renderJlabel() {
@@ -95,9 +95,9 @@ public class Estate extends Tile {
         @Override
         public String render() {
             if (doors.stream().anyMatch(e -> Estate.this.position.add(e).equals(this.position))) {
-                return "|*";
+                return "*";
             }
-            if (this.occupant.isPresent()) return "|" + this.occupant.get().getCharacter().toString().charAt(0);
+            if (this.occupant.isPresent()) return Character.toString(this.occupant.get().getCharacter().toString().charAt(0));
             return Estate.this.render();
         }
     }

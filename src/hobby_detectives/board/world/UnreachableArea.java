@@ -15,10 +15,6 @@ public class UnreachableArea extends Tile {
 
     @Override
     public String render() {
-        return "|" + CharacterColors.BOLD.getColor() + "#" + CharacterColors.RESET.getColor();
-    }
-
-    public JLabel renderJLabel() {
-        return new JLabel("|" + CharacterColors.BOLD.getColor() + "#" + CharacterColors.RESET.getColor());
+        return "#";
     }
 }

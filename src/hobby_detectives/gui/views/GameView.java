@@ -1,11 +1,14 @@
 package hobby_detectives.gui.views;
-import hobby_detectives.controller.GameController;
+import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.game.GameModel;
 import hobby_detectives.gui.panels.MapPanelView;
 import hobby_detectives.gui.panels.StatusPanelView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -38,7 +41,13 @@ public class GameView extends JFrame implements PropertyChangeListener {
         gridBagLayout.rowWeights = new double[] { 0.1, 0.1, 0.1, 0.1 };
         this.setLayout(gridBagLayout);
 
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                controller.promptForGameExit();
+            }
+        });
         this.setSize(GAME_FRAME_WIDTH, GAME_FRAME_HEIGHT);
 
         this.setLocationRelativeTo(null); // centers the window in the center of the screen
