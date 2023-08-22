@@ -49,7 +49,7 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
                 int finalC = c;
                 tileOnBoard.addActionListener(onclick -> {
                     // TODO send something to controller
-                    System.out.println("tile clicked at " + finalR + finalC);
+                    System.out.println("tile clicked at " + finalR +"   "+ finalC);
                 });
 
                 this.add(tileOnBoard);
