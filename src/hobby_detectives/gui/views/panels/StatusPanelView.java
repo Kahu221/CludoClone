@@ -2,6 +2,7 @@ package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.gui.models.GameModel;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -20,6 +21,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
     public StatusPanelView(GameModel model) {
         this.model = model;
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.model.addPropertyChangeListener(this);
         draw();
         this.add(currentPlayer);
