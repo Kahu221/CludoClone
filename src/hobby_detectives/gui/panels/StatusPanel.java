@@ -1,4 +1,4 @@
-package hobby_detectives.gui.status;
+package hobby_detectives.gui.panels;
 
 import javax.swing.*;
 
