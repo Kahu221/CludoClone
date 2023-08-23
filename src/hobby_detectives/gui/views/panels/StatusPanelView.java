@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final GameController controller;
-
+    private final GameModel model;
     private final JLabel currentPlayer = new JLabel("Loading");
     private final JLabel currentDiceRoll = new JLabel("Loading");
     private final JLabel errorMessage = new JLabel("");
@@ -28,7 +28,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JButton solveButton = new JButton("Solve");
     private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
-    private final GameModel model;
+
 
     public StatusPanelView(GameModel model, GameController controller) {
         this.controller = controller;
@@ -118,6 +118,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void drawGuess(){
+
 
     }
 
