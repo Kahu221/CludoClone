@@ -116,6 +116,7 @@ public class GameController {
     }
 
     public void tryMovePlayer(Position desiredPosition) {
+        this.model.setErrorMessage("");
         var player = this.model.getCurrentPlayer();
         var desiredTile = this.model.getBoard().read(desiredPosition);
 
