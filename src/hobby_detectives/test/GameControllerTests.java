@@ -25,10 +25,10 @@ public class GameControllerTests {
         this.controller = new GameController(this.model);
         this.model.setWaitingForPlayer(true);
         this.controller.startGame(List.of(
+                new Player(CharacterType.MALINA, new ArrayList<>(), ""),
                 new Player(CharacterType.PERCY, new ArrayList<>(), ""),
                 new Player(CharacterType.BERT, new ArrayList<>(), ""),
-                new Player(CharacterType.LUCINA, new ArrayList<>(), ""),
-                new Player(CharacterType.MALINA, new ArrayList<>(), "")
+                new Player(CharacterType.LUCINA, new ArrayList<>(), "")
         ));
         this.model.setWaitingForPlayer(true);
         this.controller.confirmPlayerChange();
@@ -36,22 +36,42 @@ public class GameControllerTests {
     }
 
     @Test
-    public void testValidMove() {
+    public void testPlayerCanMakeSimpleValidMove() {
+        setDiceRoll(5);
+
+        Player testPlayer = model.getCurrentPlayer();
+
+        Position testPlayerPosition =testPlayer.getTile().getPosition();
+        Position newValidPlayerPosition = new Position(
+                testPlayerPosition.x() + 2, testPlayerPosition.y() - 2);
+
+        this.controller.tryMovePlayer(newValidPlayerPosition);
+        assertEquals(testPlayer.getTile().getPosition(), newValidPlayerPosition);
+    }
+
+    @Test
+    public void testPlayerCannotMoveMoreThanAllocatedMoves() {
+        setDiceRoll(4);
+        Player testPlayer = model.getCurrentPlayer();
+
+        Position testPlayerPosition =testPlayer.getTile().getPosition();
+        Position newinValidPlayerPosition = new Position(
+                testPlayerPosition.x() + 4, testPlayerPosition.y() - 2);
+        this.controller.tryMovePlayer(newinValidPlayerPosition);
+
+        assertEquals("You need " + 6 + " moves.", model.getErrorMessage());
+        assertNotEquals(testPlayer.getTile().getPosition(), newinValidPlayerPosition);
+        assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
+    }
+    public void setDiceRoll(int num) {
         try {
             Field diceRollField = model.getClass().getDeclaredField("diceRoll");
             diceRollField.setAccessible(true);
 
-            diceRollField.setInt(model, 5);
-            assertEquals(5, model.getDiceRoll());
+            diceRollField.setInt(model, num);
+            assertEquals(num, model.getDiceRoll());
         } catch (Exception ignored) {}
-
-        Position currentPlayerPosition = model.getCurrentPlayer().getTile().getPosition();
-        Position newValidPlayerPosition = new Position(
-                currentPlayerPosition.x() + 2, currentPlayerPosition.y() + 1);
-
-        this.controller.tryMovePlayer(newValidPlayerPosition);
     }
-
 
 
 }

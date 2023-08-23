@@ -142,11 +142,10 @@ public class GameController {
                 this.model.useNumberOfMoves(path.size());
 
                 this.model.notifyBoardUpdate();
+
+                endTurn();
             }
         }
-
-
-        //endTurn();
     }
 
 
