@@ -1,8 +1,6 @@
 package hobby_detectives.board;
 
-import hobby_detectives.board.world.Estate;
-import hobby_detectives.board.world.Tile;
-import hobby_detectives.board.world.UnreachableArea;
+import hobby_detectives.board.world.*;
 import hobby_detectives.data.Direction;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
@@ -12,10 +10,7 @@ import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.game.WeaponCard;
 import hobby_detectives.player.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents the game board, holding data and logic that relates
@@ -30,6 +25,7 @@ public class Board {
     public final List<Card> unrefutedCards = new ArrayList<>();
     private final List<Estate> estates;
     private final Tile[][] board;
+    private final Set<Edge> edges = new HashSet<Edge>();
     private final GameModel game;
 
     //remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
@@ -87,6 +83,8 @@ public class Board {
         applyUnreachableArea(new Position(5, 11), 2, 2);
         applyUnreachableArea(new Position(11, 17), 2, 2);
         applyUnreachableArea(new Position(17, 11), 2, 2);
+
+        generateEdges();
     }
 
     private void applyUnreachableArea(Position origin, int width, int height) {
@@ -148,5 +146,30 @@ public class Board {
         return Optional.ofNullable(position);
     }
 
+    private void generateEdges() {
+        for (Tile[] tiles : board) {
+            for (Tile tile : tiles) {
+                addAdjacentEdges(tile);
+            }
+        }
+    }
 
+    private void addAdjacentEdges(Tile tile) {
+
+        int tileX = tile.getPosition().x();;
+        int tileY = tile.getPosition().y();
+
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (Math.abs(x) % 2 == 1 && y % 2 == 0) {
+                    if (!(tileX + x < 0 || tileX + x >= boardSize))
+                        edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
+                }
+                if (x % 2 == 0 && Math.abs(y) % 2 == 1) {
+                    if (!(tileY + y < 0 || tileY + y >= boardSize))
+                        edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
+                }
+            }
+        }
+    }
 }
