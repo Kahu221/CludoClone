@@ -119,31 +119,29 @@ public class GameController {
         var player = this.model.getCurrentPlayer();
         var desiredTile = this.model.getBoard().read(desiredPosition);
 
-        var successfulMove = true;
         // Check if the player is attempting to move into an estate.
-        if (desiredTile instanceof Estate e) {
-            this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
-            // Check if the player is attempting to move into an estate fill tile.
-        } else if (desiredTile instanceof Estate.EstateFillTile eft) {
-            this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
-        } else if (desiredTile instanceof UnreachableArea) {
-            successfulMove = false;
-        }
-        if (successfulMove) {
-            var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
-            if (path.isEmpty()) {
-                this.model.setErrorMessage("You can't move there.");
-            } else if (path.size() > this.model.getDiceRoll()) {
-                this.model.setErrorMessage("You need " + path.size() + " moves.");
+
+        var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
+        if (path.isEmpty()) {
+            this.model.setErrorMessage("You can't move there.");
+        } else if (path.size() > this.model.getDiceRoll()) {
+            this.model.setErrorMessage("You need " + path.size() + " moves.");
+        } else {
+            if (desiredTile instanceof Estate e) {
+                this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
+                // Check if the player is attempting to move into an estate fill tile.
+            } else if (desiredTile instanceof Estate.EstateFillTile eft) {
+                player.getTile().setPlayer(null);
+                this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
             } else {
                 player.getTile().setPlayer(null);
                 desiredTile.setPlayer(player);
                 player.setTile(desiredTile);
-                this.model.useNumberOfMoves(path.size());
-                this.model.notifyBoardUpdate();
-
-                if(this.model.getDiceRoll() < 1) endTurn();
             }
+            this.model.useNumberOfMoves(path.size());
+            this.model.notifyBoardUpdate();
+
+            if(this.model.getDiceRoll() < 1) endTurn();
         }
     }
 

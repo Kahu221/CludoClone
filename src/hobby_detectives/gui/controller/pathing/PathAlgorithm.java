@@ -56,15 +56,17 @@ public class PathAlgorithm {
                 var dist = destination.distance(origin);
                 if (dist <= 1 && dist > 0) {
                     var tile = board.read(destination);
-                    if (tile != null
-                            && !(tile instanceof UnreachableArea)
-                            && !(tile instanceof Estate.EstateFillTile)
-                            && !(tile instanceof Estate)
-                            && tile.occupant.isEmpty()) {
-                        set.add(new BoardEdge(origin, destination));
-                    }
-                }
+                    if (tile == null) continue;
+                    if (tile instanceof UnreachableArea) continue;
 
+                    if (tile instanceof Estate.EstateFillTile eft &&
+                            eft.parent.doors.stream().noneMatch(d -> d.add(eft.parent.getPosition()).equals(
+                                    destination
+                            ))) continue;
+                    if (tile instanceof Estate) continue;
+                    if (tile.occupant.isPresent()) continue;
+                    set.add(new BoardEdge(origin, destination));
+                }
             }
         }
         return set;

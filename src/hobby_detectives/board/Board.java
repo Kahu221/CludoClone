@@ -95,7 +95,7 @@ public class Board {
     /**
      * Attempts to move a player into an estate using the translation position.
      */
-    public void tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e) {
+    public boolean tryMoveIntoEstate(Player p, Position possibleTranslate, Estate e) {
         // Player is at a door.
         if (e.doors.stream().anyMatch(d -> d.add(e.getPosition()).equals(possibleTranslate))) {
             if (e.occupant.isEmpty()) {
@@ -110,8 +110,10 @@ public class Board {
                 }
 
                 //game.promptPlayerForGuess(p, e);
+                return true;
             }
         }
+        return false;
     }
 
     /**
