@@ -19,7 +19,6 @@ public class Main {
             var controller = new GameController(model);
             var view = new GameView(model, controller);
             view.setVisible(true);
-            model.setWaitingForPlayer(true);
         });
     }
 }

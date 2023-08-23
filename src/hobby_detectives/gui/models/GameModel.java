@@ -30,10 +30,10 @@ public class GameModel {
     /**
      * The players in the game.
      */
-    public final Queue<Player> players;
+    public Queue<Player> players;
     private final Scanner inputScanner = new Scanner(System.in);
     private final Random random = new Random();
-    private final CardTriplet correctTriplet;
+    public CardTriplet correctTriplet;
     private boolean running = false;
 
     private Player currentPlayer = null;
@@ -81,79 +81,8 @@ public class GameModel {
 
     public GameModel() {
         board = new Board(24, this);
-        var numPlayers = 4; // TODO not this
-
-        //initililze players
-        var playerSeeds = new ArrayList<Player>();
-        IntStream.range(0, numPlayers).forEach(i -> {
-            Player currentPlayer = new Player(CharacterType.values()[i], new ArrayList<Card>(), CharacterColors.values()[i].getColor());
-            playerSeeds.add(currentPlayer);
-            switch (CharacterType.values()[i]) {
-                case LUCINA -> {
-                    board.read(new Position(11, 1)).setPlayer(currentPlayer);
-                    currentPlayer.setTile(board.read(new Position(11, 1)));
-                }
-                case BERT -> {
-                    board.read(new Position(1, 9)).setPlayer(currentPlayer);
-                    currentPlayer.setTile(board.read(new Position(1, 9)));
-                }
-                case MALINA -> {
-                    board.read(new Position(9, 22)).setPlayer(currentPlayer);
-                    currentPlayer.setTile(board.read(new Position(9, 22)));
-                }
-                case PERCY -> {
-                    board.read(new Position(22, 14)).setPlayer(currentPlayer);
-                    currentPlayer.setTile(board.read(new Position(22, 14)));
-                }
-                default -> throw new Error();
-            }
-        });
-
-        // initialize cards and correct cards
-        List<PlayerCard> playerCards = new ArrayList<>(Arrays.stream(CharacterType.values()).map(PlayerCard::new).toList());
-        for(Card c : playerCards) this.allCards.put(c.toString(), c);
-        Collections.shuffle(playerCards);
-
-        List<WeaponCard> weaponCards = new ArrayList<>(Arrays.stream(WeaponType.values()).map(WeaponCard::new).toList());
-        Collections.shuffle(weaponCards);
-        for(Card c : weaponCards) this.allCards.put(c.toString(), c);
-
-        List<EstateCard> estateCards = new ArrayList<>(Arrays.stream(EstateType.values()).map(EstateCard::new).toList());
-        for(Card c : estateCards) this.allCards.put(c.toString(), c);
-        Collections.shuffle(estateCards);
-
-        correctTriplet = new CardTriplet(
-                weaponCards.remove(0),
-                estateCards.remove(0),
-                playerCards.remove(0)
-        );
-
-        var remainingCards = new ArrayDeque<Card>();
-        remainingCards.addAll(playerCards);
-        remainingCards.addAll(weaponCards);
-        remainingCards.addAll(estateCards);
-        int counter = 0;
-        while (!remainingCards.isEmpty()) {
-            Card current = remainingCards.pop();
-            playerSeeds.get(counter).addCard(current);
-            counter++;
-            if (counter >= numPlayers) counter = 0;
-        }
-
-
-        players = new ArrayDeque<>(playerSeeds);
-        currentPlayer = players.peek();
     }
 
-    /**
-     * Runs the game. This method will block until the end of the game.
-     */
-//    public void run() {
-//        running = true;
-//        while (running) {
-//            turn();
-//        }
-//    }
 
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
@@ -234,33 +163,7 @@ public class GameModel {
 //        return characterGuessed;
 //    }
 
-    /**
-     * Changes the current player to the specified player, by prompting the current player
-     * to pass the device to the next player.
-     */
-//    public void changeTo(Player player) {
-//        System.out.println("Pass the tablet to " + player + " and then press ENTER.");
-//        scannerNewLine();
-//    }
 
-//    /** Method to create and close() a new instance of a Scanner for newLine input purposes
-//     * Solves bugs and crashes caused by Scanner not being cleared from previous usage
-//     * @return the output of the Scanner
-//     */
-//
-//    public String scannerNewLine() {
-//        Scanner newInputScanner = new Scanner(System.in);
-//        return newInputScanner.nextLine();
-//    }
-
-//    /** Method to create and close() a new instance of a Scanner for next() input purposes
-//     * Solves bugs and crashes caused by Scanner not being cleared from previous usage
-//     * @return the output of the Scanner
-//     */
-//    public String scannerNext() {
-//        Scanner newInputScanner = new Scanner(System.in);
-//        return newInputScanner.next();
-//    }
 //    /**
 //     * Prompts the player if they would like to make a guess, and then goes through
 //     * the logic for making a guess.

@@ -3,6 +3,7 @@ import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.panels.MapPanelView;
 import hobby_detectives.gui.views.panels.PromptExitView;
+import hobby_detectives.gui.views.panels.SetupView;
 import hobby_detectives.gui.views.panels.StatusPanelView;
 
 import javax.swing.*;
@@ -26,6 +27,8 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     private final JButton acknowledgePresence;
 
+    private final SetupView setupView;
+
     public GameView(GameModel model, GameController controller) {
         this.model = model;
         this.controller = controller;
@@ -33,7 +36,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
         mapView = new MapPanelView(model, controller);
         this.model.addPropertyChangeListener(this);
 
-        acknowledgePresence = new JButton("Please pass the tablet to " + this.model.getCurrentPlayer().getCharacter().toString());
+        acknowledgePresence = new JButton();
         acknowledgePresence.addActionListener(onClick -> {
             this.controller.confirmPlayerChange();
         });
@@ -62,7 +65,15 @@ public class GameView extends JFrame implements PropertyChangeListener {
         game.add(exit);
         menuBar.add(game);
 
+        setupView = new SetupView(this, 4, this.controller);
+        this.add(setupView);
         this.setJMenuBar(menuBar);
+    }
+
+    public void finishSetup() {
+        this.remove(this.setupView);
+        this.revalidate();
+        this.repaint();
     }
 
     /**
