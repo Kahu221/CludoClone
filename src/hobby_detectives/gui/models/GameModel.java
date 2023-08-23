@@ -17,6 +17,12 @@ import java.util.stream.IntStream;
  * Holds the data for the abstract game.
  */
 public class GameModel {
+    private boolean wantsToGuess = false;
+    public void changeGuessState(boolean a){
+        this.observable.firePropertyChange("wantsToGuess", wantsToGuess, a);
+        this.wantsToGuess = a;
+    }
+    public boolean getWantToGuess(){return wantsToGuess;}
     private final PropertyChangeSupport observable = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

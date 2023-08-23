@@ -1,6 +1,7 @@
 package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.game.Card;
+import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 
 import java.awt.*;
@@ -18,14 +19,17 @@ import javax.swing.border.EmptyBorder;
  * -
  */
 public class StatusPanelView extends JPanel implements PropertyChangeListener {
+    private final GameController controller;
+
     private final JLabel currentPlayer = new JLabel("Loading");
     private final JLabel currentDiceRoll = new JLabel("Loading");
     private final JButton guessButton = new JButton("Make Guess");
-    private final JButton makeSolve = new JButton("Solve");
+    private final JButton solveButton = new JButton("Solve");
     private final JPanel cards = new JPanel();
     private final GameModel model;
 
-    public StatusPanelView(GameModel model) {
+    public StatusPanelView(GameModel model, GameController controller) {
+        this.controller = controller;
         this.model = model;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.model.addPropertyChangeListener(this);
@@ -37,6 +41,14 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         //set margins
         currentPlayer.setBorder(new EmptyBorder(10,0,5,0));
         currentDiceRoll.setBorder(new EmptyBorder(10,0,30,0));
+
+        //add actionListner to buttons
+        guessButton.addActionListener(onclick -> {
+            this.controller.promptPlayerForGuess();
+        });
+        solveButton.addActionListener(onclick -> {
+            this.controller.attemptSolve();
+        });
 
 
         //set font sizes
@@ -51,14 +63,16 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     private JPanel addButtons(){
+
         JPanel buttonContainer = new JPanel();
         buttonContainer.add(guessButton);
-        buttonContainer.add(makeSolve);
+        buttonContainer.add(solveButton);
         buttonContainer.validate();
         return buttonContainer;
     }
 
     void redrawPanelView(){
+
         this.removeAll();
         this.cards.removeAll();
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
@@ -87,9 +101,15 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.add(cards);
         this.revalidate();
         this.repaint();
+
+    }
+
+    public void drawGuess(){
+
     }
 
     public void propertyChange(PropertyChangeEvent event) {
+        if(event.getPropertyName().equals("wantsToGuess")) drawGuess();
         redrawPanelView();
     }
 }

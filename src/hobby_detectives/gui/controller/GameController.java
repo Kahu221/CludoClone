@@ -163,10 +163,15 @@ public class GameController {
         this.model.setWaitingForPlayer(true);
     }
 //
-//    public void promptPlayerForGuess(Player p, Estate estate) {}
+    public void promptPlayerForGuess() {
+        this.model.changeGuessState(true);
+    }
+
 //
-//    public boolean attemptSolve(Player p, CardTriplet solveattempt) {}
-//
+    public void attemptSolve() {
+
+    }
+
 //    public void turn(){}
 
 }
