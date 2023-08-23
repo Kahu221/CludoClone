@@ -1,6 +1,7 @@
 package hobby_detectives;
 
 import hobby_detectives.gui.controller.GameController;
+import hobby_detectives.gui.models.GameModel;
 
 import javax.swing.*;
 
@@ -13,7 +14,7 @@ public class Main {
             }catch(Exception e){
                 e.printStackTrace();
             }
-            var controller = new GameController();
+            var controller = new GameController(new GameModel());
             controller.start();
         });
     }

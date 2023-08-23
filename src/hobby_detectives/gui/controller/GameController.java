@@ -17,8 +17,8 @@ public class GameController {
     private final GameView gameView;
     private final GameModel model;
 
-    public GameController(){
-        this.model = new GameModel();
+    public GameController(GameModel model){
+        this.model = model;
         this.gameView = new GameView(this.model, this);
     }
 
@@ -29,6 +29,7 @@ public class GameController {
      */
     public void start() {
         this.model.setWaitingForPlayer(true);
+        this.gameView.setVisible(true);
     }
 
     /**

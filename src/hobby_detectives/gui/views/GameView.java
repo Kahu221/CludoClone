@@ -52,7 +52,6 @@ public class GameView extends JFrame implements PropertyChangeListener {
         this.setSize(GAME_FRAME_WIDTH, GAME_FRAME_HEIGHT);
 
         this.setLocationRelativeTo(null); // centers the window in the center of the screen
-        this.setVisible(true);
 
         menuBar = new JMenuBar();
 
