@@ -17,4 +17,13 @@ public record Position(int x, int y) {
     public Position subtract(Position position) {
         return new Position(this.x - position.x, this.y - position.y);
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s,%s)", x, y);
+    }
+
+    public double distance(Position other) {
+        return Math.hypot(Math.abs(other.x()-this.x()), Math.abs(other.y()-this.y()));
+    }
 }

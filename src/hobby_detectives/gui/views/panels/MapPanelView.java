@@ -42,7 +42,6 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
      * setting the color of each tile (each "Tile" is a JButton)
      */
     public void redraw() {
-        System.out.println("Redrawing map");
         this.removeAll();
         var board = this.model.getBoard();
         for (int r = 0; r < 24; r++) {
@@ -54,7 +53,6 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
 
                 if (current.occupant.isPresent()) {
                     OccupantDetail occupantDetail = getOccupantDetails(current.occupant.get().getCharacter());
-                    System.out.println(occupantDetail.name() + " -> " + current.occupant.get().getTile().getPosition());
                     tileOnBoard.setBackground(occupantDetail.color());
                     tileOnBoard.setText(occupantDetail.name());
                 } else {
