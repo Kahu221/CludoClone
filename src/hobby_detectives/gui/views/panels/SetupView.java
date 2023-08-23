@@ -50,13 +50,15 @@ public class SetupView extends JPanel {
 
     class PlayerSetupPanel extends JPanel {
         private CharacterType selected;
+        private final JButton confirm;
 
         public PlayerSetupPanel(int index) {
             this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             JLabel message = new JLabel("Player " + (index + 1) + ": Who would you like to play as?");
             ButtonGroup options = new ButtonGroup();
 
-            JButton confirm = new JButton("Confirm");
+            confirm = new JButton("Confirm");
+            confirm.setEnabled(false);
             confirm.addActionListener(c -> { confirm(this); });
             this.add(message);
 
@@ -67,6 +69,7 @@ public class SetupView extends JPanel {
                 }
                 button.addActionListener(d -> {
                     this.selected = type;
+                    confirm.setEnabled(true);
                 });
                 this.add(button);
                 options.add(button);

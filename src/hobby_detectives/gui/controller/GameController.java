@@ -1,6 +1,5 @@
 package hobby_detectives.gui.controller;
-import hobby_detectives.board.world.Estate;
-import hobby_detectives.board.world.UnreachableArea;
+import hobby_detectives.board.world.*;
 import hobby_detectives.data.CharacterColors;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.EstateType;
@@ -145,6 +144,38 @@ public class GameController {
         endTurn();
     }
 
+    public List<Edge> findShortestPath(Position currentPosition, Position goal, int movesLeft) {
+
+        Queue<PathItem> fringe = new PriorityQueue<>();
+        Map<Tile, Edge> backPointers = new HashMap<>();
+        fringe.offer(new PathItem(this.model.getBoard().read(currentPosition), null, 0, distanceTo(currentPosition, goal)));
+        Set<Tile> visited = new HashSet<>();
+
+        while (!fringe.isEmpty()) {
+
+            PathItem currentTile = fringe.poll();
+
+            if (!visited.contains(currentTile.getCurrentTile())) { //if current stop has not been visited
+
+                visited.add(currentTile.getCurrentTile()); //add to visited
+                backPointers.put(currentTile.getCurrentTile(), currentTile.getFromEdge()); //add to backPointers with stop pointing to an edge
+
+//                if (currentTile.getCurrentTile().equals(this.model.getBoard().read(goal))) {
+//                    return reconstructPath(backPointers, start, goal); //if currentStop is goal, return shortest path to goal
+//                }
+//
+//                for (Edge edge : currentTile.getCurrentTile().getForwardEdges()) { //for currentStops edges
+//                    if (!visited.contains(edge.getToTile())) fringe.add(new PathItem(edge.getToTile(), edge, currentTile.getDistFromStart() + 1, distanceTo(edge.getFromTile().getPosition(), goal))); //add to queue
+//                }
+            }
+        }
+        return List.of();
+    }
+
+    public int distanceTo(Position from, Position goal) {
+        return Math.abs(goal.x() - from.x()) + Math.abs(goal.y() - from.y());
+    }
+
     public void endTurn() {
         this.model.players.add(this.model.getCurrentPlayer());
         System.out.println("Setting to " + this.model.players.peek());
@@ -152,10 +183,15 @@ public class GameController {
         this.model.setWaitingForPlayer(true);
     }
 //
-//    public void promptPlayerForGuess(Player p, Estate estate) {}
+    public void promptPlayerForGuess() {
+        this.model.changeGuessState(true);
+    }
+
 //
-//    public boolean attemptSolve(Player p, CardTriplet solveattempt) {}
-//
+    public void attemptSolve() {
+
+    }
+
 //    public void turn(){}
 
 }

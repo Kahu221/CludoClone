@@ -1,6 +1,7 @@
 package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.game.Card;
+import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 
 import java.awt.*;
@@ -18,15 +19,17 @@ import javax.swing.border.EmptyBorder;
  * -
  */
 public class StatusPanelView extends JPanel implements PropertyChangeListener {
+    private final GameController controller;
+
     private final JLabel currentPlayer = new JLabel("Loading");
     private final JLabel currentDiceRoll = new JLabel("Loading");
     private final JButton guessButton = new JButton("Make Guess");
-    private final JButton makeSolve = new JButton("Solve");
-
+    private final JButton solveButton = new JButton("Solve");
     private final JPanel cards = new JPanel();
     private final GameModel model;
 
-    public StatusPanelView(GameModel model) {
+    public StatusPanelView(GameModel model, GameController controller) {
+        this.controller = controller;
         this.model = model;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.model.addPropertyChangeListener(this);
@@ -37,7 +40,16 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         cards.setAlignmentX(Component.CENTER_ALIGNMENT);
         //set margins
         currentPlayer.setBorder(new EmptyBorder(10,0,5,0));
-        currentDiceRoll.setBorder(new EmptyBorder(10,0,100,0));
+        currentDiceRoll.setBorder(new EmptyBorder(10,0,30,0));
+
+        //add actionListner to buttons
+        guessButton.addActionListener(onclick -> {
+            this.controller.promptPlayerForGuess();
+        });
+        solveButton.addActionListener(onclick -> {
+            this.controller.attemptSolve();
+        });
+
 
         //set font sizes
         currentPlayer.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -46,10 +58,21 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.add(currentPlayer);
         this.add(currentDiceRoll);
 
+        addButtons();
         this.add(cards);
     }
 
+    private JPanel addButtons(){
+
+        JPanel buttonContainer = new JPanel();
+        buttonContainer.add(guessButton);
+        buttonContainer.add(solveButton);
+        buttonContainer.validate();
+        return buttonContainer;
+    }
+
     void redrawPanelView(){
+
         this.removeAll();
         this.cards.removeAll();
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
@@ -63,6 +86,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
         for(Card c : this.model.getCurrentPlayer().getCards()){
             JPanel newCard = new JPanel();
+            //TODO these cards to not scale with size and need to be fixeed in future
             newCard.setPreferredSize(new Dimension(150,300));
             newCard.add(new JLabel(c.toString()));
             newCard.setBackground(new Color((int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254)));
@@ -73,12 +97,19 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         cards.repaint();
         this.add(currentPlayer);
         this.add(currentDiceRoll);
+        this.add(addButtons());
         this.add(cards);
         this.revalidate();
         this.repaint();
+
+    }
+
+    public void drawGuess(){
+
     }
 
     public void propertyChange(PropertyChangeEvent event) {
+        if(event.getPropertyName().equals("wantsToGuess")) drawGuess();
         redrawPanelView();
     }
 }
