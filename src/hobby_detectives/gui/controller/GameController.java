@@ -1,8 +1,5 @@
 package hobby_detectives.gui.controller;
-import hobby_detectives.board.world.Edge;
-import hobby_detectives.board.world.Estate;
-import hobby_detectives.board.world.Tile;
-import hobby_detectives.board.world.UnreachableArea;
+import hobby_detectives.board.world.*;
 import hobby_detectives.data.CharacterColors;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.EstateType;
@@ -149,11 +146,16 @@ public class GameController {
 
     public List<Edge> findShortestPath(Position currentPosition, Position goal, int movesLeft) {
 
-        Queue<Tile> fringe = new PriorityQueue<>();
+        Queue<PathItem> fringe = new PriorityQueue<>();
         Map<Tile, Edge> backPointers = new HashMap<>();
-
+        fringe.offer(new PathItem(this.model.getBoard().read(currentPosition), null, 0, distanceTo(currentPosition, goal)));
+        Set<Tile> visited = new HashSet<>();
 
         return null;
+    }
+
+    public int distanceTo(Position from, Position goal) {
+        return Math.abs(goal.x() - from.x()) + Math.abs(goal.y() - from.y());
     }
 
     public void endTurn() {
