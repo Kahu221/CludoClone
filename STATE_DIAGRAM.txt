@@ -5,10 +5,12 @@ class DetectivesGameSM {
     }
     
     map_view {
+      
       entry / {
         drawMap();
         drawStatus();
       }
+      
       [canGuess() && hasMoves()] clicks_on_estate -> guess_popup;
       [hasMoves()] click_on_empty_tile -> map_view;
       
@@ -18,9 +20,14 @@ class DetectivesGameSM {
     }
     
     guess_popup {
-      entry / { openPopup(); }
+      
+      entry / { openPopup(); 
+              	confirm -> waiting_for_next_refuter;
+              }
+      
       confirm -> waiting_for_next_refuter;
       cancel -> waiting_for_next_player;
+      
       exit / { closePopup(); }
     }
     
@@ -28,7 +35,6 @@ class DetectivesGameSM {
       player_refutes_guess -> waiting_for_next_refuter;
       
       finished_refuting -> waiting_for_next_refuter;
-      after(10) -> waiting_for_next_refuter;
     }
     
     waiting_for_next_refuter {
@@ -41,6 +47,7 @@ class DetectivesGameSM {
     }
     
     waiting_for_next_player {
+      
       entry / {
         clearScreen();
         popupPlayerTransition();
@@ -48,8 +55,6 @@ class DetectivesGameSM {
       
       player_confirms_presence -> map_view;
       
-      // move player anyway after 10sec
-      after(10) -> map_view;
     }
   }
 }
