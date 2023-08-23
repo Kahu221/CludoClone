@@ -52,6 +52,14 @@ public class GameModel {
         this.observable.firePropertyChange("waitingForPlayer", old, wfp);
     }
 
+    private String errorMessage = null;
+    public String getErrorMessage() { return this.errorMessage; }
+    public void setErrorMessage(String errorMessage) {
+        String old = this.errorMessage;
+        this.errorMessage = errorMessage;
+        this.observable.firePropertyChange("errorMessage", old, this.errorMessage);
+    }
+
     private final Board board;
     public Board getBoard() { return this.board; }
     public void notifyBoardUpdate() {
