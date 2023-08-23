@@ -83,13 +83,13 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
 
     private OccupantDetail getOccupantDetails(CharacterType characterType) {
         if (characterType.equals(CharacterType.LUCINA)) {
-            return new OccupantDetail(CharacterType.LUCINA.toString(), Color.PINK);
+            return new OccupantDetail(CharacterType.LUCINA.toString().substring(0,1), Color.PINK);
         } else if (characterType.equals(CharacterType.BERT)) {
-            return new OccupantDetail(CharacterType.BERT.toString(), Color.YELLOW);
+            return new OccupantDetail(CharacterType.BERT.toString().substring(0,1), Color.YELLOW);
         } else if (characterType.equals(CharacterType.MALINA)) {
-            return new OccupantDetail(CharacterType.MALINA.toString(), Color.ORANGE);
+            return new OccupantDetail(CharacterType.MALINA.toString().substring(0,1), Color.ORANGE);
         } else if (characterType.equals(CharacterType.PERCY)) {
-            return new OccupantDetail(CharacterType.PERCY.toString(), Color.RED);
+            return new OccupantDetail(CharacterType.PERCY.toString().substring(0,1), Color.RED);
         }
 
         return new OccupantDetail("NOT A VALID CHARACTER", Color.BLACK);
