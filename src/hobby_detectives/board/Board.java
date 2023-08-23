@@ -25,7 +25,7 @@ public class Board {
     public final List<Card> unrefutedCards = new ArrayList<>();
     private final List<Estate> estates;
     private final Tile[][] board;
-    private final Set<Edge> edges = new HashSet<Edge>();
+    private final List<Edge> edges = new ArrayList<>();
     private final GameModel game;
 
     //remeber players num are not always static can be 3 || 4 and need to figure out how to do these fkn rooms
@@ -85,6 +85,8 @@ public class Board {
         applyUnreachableArea(new Position(17, 11), 2, 2);
 
         generateEdges();
+        System.out.println(edges.size());
+        System.out.println(edges);
     }
 
     private void applyUnreachableArea(Position origin, int width, int height) {
@@ -125,6 +127,24 @@ public class Board {
         return this.board[p.x()][p.y()];
     }
 
+    public Set<Edge> tileEdges(Position p) {
+        Tile tile = read(p);
+//        int tileX =
+//        for (int x = -1; x <= 1; x++) {
+//            for (int y = -1; y <= 1; y++) {
+//                if (Math.abs(x) % 2 == 1 && y % 2 == 0) {
+//                    if (!(tileX + x < 0 || tileX + x >= boardSize))
+//                        edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
+//                }
+//                if (x % 2 == 0 && Math.abs(y) % 2 == 1) {
+//                    if (!(tileY + y < 0 || tileY + y >= boardSize))
+//                        edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
+//                }
+//            }
+//        }
+        return null;
+    }
+
     /**
      * Returns the position specified by a given input token.
      * Does not perform validation that the returned position is valid on the game board.
@@ -155,21 +175,34 @@ public class Board {
     }
 
     private void addAdjacentEdges(Tile tile) {
-
         int tileX = tile.getPosition().x();;
         int tileY = tile.getPosition().y();
+        if (!moveableArea(tile.getPosition())) return;
 
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 if (Math.abs(x) % 2 == 1 && y % 2 == 0) {
-                    if (!(tileX + x < 0 || tileX + x >= boardSize))
+                    if (!(tileX + x < 0 || tileX + x >= boardSize) && moveableArea(new Position(tileX + x, tileY + y)))
                         edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
                 }
                 if (x % 2 == 0 && Math.abs(y) % 2 == 1) {
-                    if (!(tileY + y < 0 || tileY + y >= boardSize))
+                    if (!(tileY + y < 0 || tileY + y >= boardSize) && moveableArea(new Position(tileX + x, tileY + y)))
                         edges.add(new Edge(tile, this.board[tileX + x][tileY + y]));
                 }
             }
         }
+    }
+
+    private boolean moveableArea(Position position) {
+        if (read(position) instanceof UnreachableArea) {
+            return false;
+        }
+        if (read(position) instanceof Estate.EstateFillTile) {
+            return false;
+        }
+        if (read(position) instanceof Estate) {
+            return false;
+        }
+        return true;
     }
 }

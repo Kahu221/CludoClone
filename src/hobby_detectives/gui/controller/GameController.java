@@ -1,5 +1,7 @@
 package hobby_detectives.gui.controller;
+import hobby_detectives.board.world.Edge;
 import hobby_detectives.board.world.Estate;
+import hobby_detectives.board.world.Tile;
 import hobby_detectives.board.world.UnreachableArea;
 import hobby_detectives.data.CharacterColors;
 import hobby_detectives.data.CharacterType;
@@ -143,6 +145,15 @@ public class GameController {
         this.model.notifyBoardUpdate();
 
         endTurn();
+    }
+
+    public List<Edge> findShortestPath(Position currentPosition, Position goal, int movesLeft) {
+
+        Queue<Tile> fringe = new PriorityQueue<>();
+        Map<Tile, Edge> backPointers = new HashMap<>();
+
+
+        return null;
     }
 
     public void endTurn() {

@@ -21,8 +21,8 @@ public class Edge {
         return 1;
     }
 
-//    @Override
-//    public String toString() {
-//        return fromTile.toString();
-//    }
+    @Override
+    public String toString() {
+        return fromTile.getPosition() + " " + fromTile.render() + " to " + toTile.getPosition() + " " + toTile.render() + '\n';
+    }
 }
