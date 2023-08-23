@@ -125,7 +125,7 @@ public class GameController {
         if (path.isEmpty()) {
             this.model.setErrorMessage("You can't move there.");
         } else if (path.size() > this.model.getDiceRoll()) {
-            this.model.setErrorMessage("You need " + path.size() + " moves.");
+            this.model.setErrorMessage("You need " + path.size() + " moves." + " You only have " + this.model.getDiceRoll() + " moves.");
         } else {
             if (desiredTile instanceof Estate e) {
                 this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
