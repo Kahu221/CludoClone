@@ -34,27 +34,25 @@ public class GameControllerTests {
         this.controller.confirmPlayerChange();
         this.controller.startPlayerTurn();
     }
-
     @Test
     public void testPlayerCanMakeSimpleValidMove() {
         setDiceRoll(5);
 
         Player testPlayer = model.getCurrentPlayer();
 
-        Position testPlayerPosition =testPlayer.getTile().getPosition();
+        Position testPlayerPosition = testPlayer.getTile().getPosition();
         Position newValidPlayerPosition = new Position(
                 testPlayerPosition.x() + 2, testPlayerPosition.y() - 2);
 
         this.controller.tryMovePlayer(newValidPlayerPosition);
         assertEquals(testPlayer.getTile().getPosition(), newValidPlayerPosition);
     }
-
     @Test
     public void testPlayerCannotMoveMoreThanAllocatedMoves() {
         setDiceRoll(4);
         Player testPlayer = model.getCurrentPlayer();
 
-        Position testPlayerPosition =testPlayer.getTile().getPosition();
+        Position testPlayerPosition = testPlayer.getTile().getPosition();
         Position newinValidPlayerPosition = new Position(
                 testPlayerPosition.x() + 4, testPlayerPosition.y() - 2);
         this.controller.tryMovePlayer(newinValidPlayerPosition);
@@ -63,6 +61,38 @@ public class GameControllerTests {
         assertNotEquals(testPlayer.getTile().getPosition(), newinValidPlayerPosition);
         assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
     }
+    @Test
+    public void testPlayerCannotGoIntoUnreachableArea() { /* TODO: THERE NEEDS TO BE AN ERROR FOR THIS */
+        setDiceRoll(8);
+        Player testPlayer = model.getCurrentPlayer();
+
+        Position testPlayerPosition = testPlayer.getTile().getPosition();
+        Position newinValidPlayerPosition = new Position(
+                testPlayerPosition.x() + 2, testPlayerPosition.y() - 4);
+        this.controller.tryMovePlayer(newinValidPlayerPosition);
+
+        assertNotEquals(testPlayer.getTile().getPosition(), newinValidPlayerPosition);
+        assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
+    }
+    @Test
+    public void testPlayerCannotEnterEstateWithoutGoingThroughTheDoor() {
+        setDiceRoll(8);
+        Player testPlayer = model.getCurrentPlayer();
+
+        Position testPlayerPosition = testPlayer.getTile().getPosition();
+        Position newinValidPlayerPosition = new Position(
+                testPlayerPosition.x() - 4, testPlayerPosition.y() - 2);
+        this.controller.tryMovePlayer(newinValidPlayerPosition);
+
+        assertEquals("You can't move there.", model.getErrorMessage());
+        assertNotEquals(testPlayer.getTile().getPosition(), newinValidPlayerPosition);
+        assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
+    }
+    @Test
+    public void testPlayerCanEnterAnEstateThroughTheDoor() {}
+    @Test
+    public void testThatPlayerCanOnlyLeaveEstateInCorrectDirection() {}
+
     public void setDiceRoll(int num) {
         try {
             Field diceRollField = model.getClass().getDeclaredField("diceRoll");
