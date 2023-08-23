@@ -5,6 +5,7 @@ import hobby_detectives.gui.views.panels.MapPanelView;
 import hobby_detectives.gui.views.panels.PromptExitView;
 import hobby_detectives.gui.views.panels.SetupView;
 import hobby_detectives.gui.views.panels.StatusPanelView;
+import hobby_detectives.gui.views.transitive.WaitingForPlayerView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +26,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     private final JMenuBar menuBar;
 
-    private final JButton acknowledgePresence;
+    private WaitingForPlayerView wfpView;
 
     private final SetupView setupView;
 
@@ -35,11 +36,6 @@ public class GameView extends JFrame implements PropertyChangeListener {
         statusPanel = new StatusPanelView(model);
         mapView = new MapPanelView(model, controller);
         this.model.addPropertyChangeListener(this);
-
-        acknowledgePresence = new JButton();
-        acknowledgePresence.addActionListener(onClick -> {
-            this.controller.confirmPlayerChange();
-        });
 
         var gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWeights = new double[] { 0.1, 0.1, 0.1, 0.1 };
@@ -90,12 +86,10 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 if ((Boolean) event.getNewValue()) {
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
-                    this.acknowledgePresence.setText("Please pass the tablet to " + this.model.getCurrentPlayer().getCharacter().toString());
-
-                    // show the "please pass to x" screen
-                    this.add(acknowledgePresence);
+                    this.wfpView = new WaitingForPlayerView(this.model, this.controller);
+                    this.add(this.wfpView);
                 } else {
-                    this.remove(this.acknowledgePresence);
+                    this.remove(this.wfpView);
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }

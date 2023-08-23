@@ -19,6 +19,7 @@ public class SetupView extends JPanel {
     public SetupView(GameView parent, int totalPlayers, GameController controller) {
         this.totalPlayers = totalPlayers;
         this.parent = parent;
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.startSetupForNextCharacter();
         this.controller = controller;
     }
@@ -27,6 +28,9 @@ public class SetupView extends JPanel {
         this.currentPlayerIndex++;
         this.removeAll();
 
+        var welcome = new JLabel("Welcome to Hobby Detectives");
+        welcome.setFont(new Font("Arial", Font.PLAIN, 30));
+        this.add(welcome);
         this.add(new PlayerSetupPanel(this.currentPlayerIndex));
 
         this.revalidate();
@@ -48,9 +52,13 @@ public class SetupView extends JPanel {
         private CharacterType selected;
 
         public PlayerSetupPanel(int index) {
-            this.setLayout(new GridBagLayout());
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             JLabel message = new JLabel("Player " + (index + 1) + ": Who would you like to play as?");
             ButtonGroup options = new ButtonGroup();
+
+            JButton confirm = new JButton("Confirm");
+            confirm.addActionListener(c -> { confirm(this); });
+            this.add(message);
 
             for (CharacterType type : CharacterType.values()) {
                 JRadioButton button = new JRadioButton(type.name());
@@ -63,9 +71,6 @@ public class SetupView extends JPanel {
                 this.add(button);
                 options.add(button);
             }
-            JButton confirm = new JButton("Confirm");
-            confirm.addActionListener(c -> { confirm(this); });
-            this.add(message);
             this.add(confirm);
         }
     }
