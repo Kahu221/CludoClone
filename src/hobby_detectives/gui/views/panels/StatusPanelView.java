@@ -23,6 +23,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
     private final JLabel currentPlayer = new JLabel("Loading");
     private final JLabel currentDiceRoll = new JLabel("Loading");
+    private final JLabel errorMessage = new JLabel("");
     private final JButton guessButton = new JButton("Make Guess");
     private final JButton solveButton = new JButton("Solve");
     private final JPanel cards = new JPanel();
@@ -38,9 +39,11 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         currentPlayer.setAlignmentX(Component.CENTER_ALIGNMENT);
         currentDiceRoll.setAlignmentX(Component.CENTER_ALIGNMENT);
         cards.setAlignmentX(Component.CENTER_ALIGNMENT);
+        errorMessage.setAlignmentX(Component.CENTER_ALIGNMENT);
         //set margins
         currentPlayer.setBorder(new EmptyBorder(10,0,5,0));
         currentDiceRoll.setBorder(new EmptyBorder(10,0,30,0));
+        errorMessage.setBorder(new EmptyBorder(10,0,30,0));
 
         //add actionListner to buttons
         guessButton.addActionListener(onclick -> {
@@ -54,6 +57,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         //set font sizes
         currentPlayer.setFont(new Font("Arial", Font.PLAIN, 30));
         currentDiceRoll.setFont(new Font("Arial", Font.PLAIN, 30));
+        errorMessage.setFont(new Font("Arial", Font.PLAIN, 30));
         cards.setFont(new Font("Arial", Font.PLAIN, 30));
         this.add(currentPlayer);
         this.add(currentDiceRoll);
@@ -77,6 +81,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.cards.removeAll();
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
         this.currentDiceRoll.setText("Your dice roll: " + this.model.getDiceRoll());
+        this.errorMessage.setText(this.model.getErrorMessage());
         JLabel cardsTitle = new JLabel("Your Cards");
         cardsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         cardsTitle.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -97,6 +102,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         cards.repaint();
         this.add(currentPlayer);
         this.add(currentDiceRoll);
+        this.add(this.errorMessage);
         this.add(addButtons());
         this.add(cards);
         this.revalidate();

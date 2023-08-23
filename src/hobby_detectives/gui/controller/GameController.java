@@ -132,18 +132,18 @@ public class GameController {
         if (successfulMove) {
             var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), p);
             if (path.isEmpty()) {
-                System.out.println("No path");
+                this.model.setErrorMessage("You can't move there.");
             } else if (path.size() > this.model.getDiceRoll()) {
-                System.out.println("Path too big");
+                this.model.setErrorMessage("You need " + path.size() + " moves.");
             } else {
                 player.getTile().setPlayer(null);
-
                 t.setPlayer(player);
                 player.setTile(t);
+
+                this.model.notifyBoardUpdate();
             }
         }
 
-        this.model.notifyBoardUpdate();
 
         //endTurn();
     }
@@ -151,6 +151,7 @@ public class GameController {
 
 
     public void endTurn() {
+        this.model.setErrorMessage("");
         this.model.players.add(this.model.getCurrentPlayer());
         System.out.println("Setting to " + this.model.players.peek());
         this.model.setCurrentPlayer(this.model.players.peek());
