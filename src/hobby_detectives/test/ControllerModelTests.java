@@ -10,13 +10,14 @@ import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class GuiTests {
+public class ControllerModelTests {
 	private GameController controller;
 	private GameModel model;
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		this.model = new GameModel();
 		this.controller = new GameController(this.model);
+		this.model.setWaitingForPlayer(true);
 	}
 
 	@Test
