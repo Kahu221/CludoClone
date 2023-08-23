@@ -1,11 +1,16 @@
 package hobby_detectives.test;
 
+import hobby_detectives.data.CharacterType;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
+import hobby_detectives.player.Player;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +22,12 @@ public class ControllerModelTests {
 	public void setUp() {
 		this.model = new GameModel();
 		this.controller = new GameController(this.model);
+		this.controller.startGame(List.of(
+				new Player(CharacterType.LUCINA, new ArrayList<>(), ""),
+				new Player(CharacterType.BERT, new ArrayList<>(), ""),
+				new Player(CharacterType.MALINA, new ArrayList<>(), ""),
+				new Player(CharacterType.PERCY, new ArrayList<>(), "")
+		));
 		this.model.setWaitingForPlayer(true);
 	}
 
