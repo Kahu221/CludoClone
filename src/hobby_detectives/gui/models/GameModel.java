@@ -79,6 +79,11 @@ public class GameModel {
         this.diceRoll = random.nextInt(1,6)+random.nextInt(1,6);
         this.observable.firePropertyChange("diceRoll", 0, this.diceRoll);
     }
+    public void useNumberOfMoves(int n) {
+        var old = this.diceRoll;
+        this.diceRoll -= n;
+        this.observable.firePropertyChange("diceRoll", old, this.diceRoll);
+    }
 
     /**
      * All cards in play.

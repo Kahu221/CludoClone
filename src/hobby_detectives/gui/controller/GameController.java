@@ -115,30 +115,31 @@ public class GameController {
         this.model.rollDice();
     }
 
-    public void tryMovePlayer(Position p) {
+    public void tryMovePlayer(Position desiredPosition) {
         var player = this.model.getCurrentPlayer();
-        var t = this.model.getBoard().read(p);
+        var desiredTile = this.model.getBoard().read(desiredPosition);
 
         var successfulMove = true;
         // Check if the player is attempting to move into an estate.
-        if (t instanceof Estate e) {
-            this.model.getBoard().tryMoveIntoEstate(player, p, e);
+        if (desiredTile instanceof Estate e) {
+            this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
             // Check if the player is attempting to move into an estate fill tile.
-        } else if (t instanceof Estate.EstateFillTile eft) {
-            this.model.getBoard().tryMoveIntoEstate(player, p, eft.parent);
-        } else if (t instanceof UnreachableArea) {
+        } else if (desiredTile instanceof Estate.EstateFillTile eft) {
+            this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
+        } else if (desiredTile instanceof UnreachableArea) {
             successfulMove = false;
         }
         if (successfulMove) {
-            var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), p);
+            var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
             if (path.isEmpty()) {
                 this.model.setErrorMessage("You can't move there.");
             } else if (path.size() > this.model.getDiceRoll()) {
                 this.model.setErrorMessage("You need " + path.size() + " moves.");
             } else {
                 player.getTile().setPlayer(null);
-                t.setPlayer(player);
-                player.setTile(t);
+                desiredTile.setPlayer(player);
+                player.setTile(desiredTile);
+                this.model.useNumberOfMoves(path.size());
 
                 this.model.notifyBoardUpdate();
             }
