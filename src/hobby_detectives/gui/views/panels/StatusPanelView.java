@@ -49,12 +49,13 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.add(cards);
     }
 
-    void redrawCards(){
+    void redrawPanelView(){
         this.removeAll();
         this.cards.removeAll();
         this.currentPlayer.setText("Current player: " + this.model.getCurrentPlayer().getCharacter().toString());
         this.currentDiceRoll.setText("Your dice roll: " + this.model.getDiceRoll());
         JLabel cardsTitle = new JLabel("Your Cards");
+        cardsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         cardsTitle.setFont(new Font("Arial", Font.PLAIN, 30));
         this.cards.add(cardsTitle);
 
@@ -62,7 +63,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
         for(Card c : this.model.getCurrentPlayer().getCards()){
             JPanel newCard = new JPanel();
-            newCard.setSize(100,200);
+            newCard.setPreferredSize(new Dimension(150,300));
             newCard.add(new JLabel(c.toString()));
             newCard.setBackground(new Color((int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254)));
             cardsContainer.add(newCard);
@@ -78,6 +79,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void propertyChange(PropertyChangeEvent event) {
-        redrawCards();
+        redrawPanelView();
     }
 }
