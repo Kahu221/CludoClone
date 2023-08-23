@@ -140,10 +140,9 @@ public class GameController {
                 desiredTile.setPlayer(player);
                 player.setTile(desiredTile);
                 this.model.useNumberOfMoves(path.size());
-
                 this.model.notifyBoardUpdate();
 
-                endTurn();
+                if(this.model.getDiceRoll() < 1) endTurn();
             }
         }
     }

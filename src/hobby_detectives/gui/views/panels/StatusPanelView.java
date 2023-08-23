@@ -26,6 +26,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JLabel errorMessage = new JLabel("");
     private final JButton guessButton = new JButton("Make Guess");
     private final JButton solveButton = new JButton("Solve");
+    private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
     private final GameModel model;
 
@@ -52,6 +53,11 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         solveButton.addActionListener(onclick -> {
             this.controller.attemptSolve();
         });
+        endTurnButton.addActionListener(
+                onclick -> {
+                    this.controller.endTurn();
+                }
+        );
 
 
         //set font sizes
@@ -71,6 +77,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         JPanel buttonContainer = new JPanel();
         buttonContainer.add(guessButton);
         buttonContainer.add(solveButton);
+        buttonContainer.add(endTurnButton);
         buttonContainer.validate();
         return buttonContainer;
     }
