@@ -47,13 +47,14 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
         var board = this.model.getBoard();
         for (int r = 0; r < 24; r++) {
             for (int c = 0; c < 24; c++) {
-                final var currentPosition = new Position(r, c);
+                final var currentPosition = new Position(c, r);
                 Tile current = board.read(currentPosition);
 
                 var tileOnBoard = new JButton("");
 
                 if (current.occupant.isPresent()) {
                     OccupantDetail occupantDetail = getOccupantDetails(current.occupant.get().getCharacter());
+                    System.out.println(occupantDetail.name() + " -> " + current.occupant.get().getTile().getPosition());
                     tileOnBoard.setBackground(occupantDetail.color());
                     tileOnBoard.setText(occupantDetail.name());
                 } else {
@@ -83,13 +84,17 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
 
     private OccupantDetail getOccupantDetails(CharacterType characterType) {
         if (characterType.equals(CharacterType.LUCINA)) {
-            return new OccupantDetail(CharacterType.LUCINA.toString().substring(0,1), Color.PINK);
+            return new OccupantDetail(CharacterType.LUCINA.toString().substring(0,1),
+                    Color.PINK);
         } else if (characterType.equals(CharacterType.BERT)) {
-            return new OccupantDetail(CharacterType.BERT.toString().substring(0,1), Color.YELLOW);
+            return new OccupantDetail(CharacterType.BERT.toString().substring(0,1),
+                    Color.YELLOW);
         } else if (characterType.equals(CharacterType.MALINA)) {
-            return new OccupantDetail(CharacterType.MALINA.toString().substring(0,1), Color.ORANGE);
+            return new OccupantDetail(CharacterType.MALINA.toString().substring(0,1),
+                    Color.ORANGE);
         } else if (characterType.equals(CharacterType.PERCY)) {
-            return new OccupantDetail(CharacterType.PERCY.toString().substring(0,1), Color.RED);
+            return new OccupantDetail(CharacterType.PERCY.toString().substring(0,1),
+                    Color.RED);
         }
 
         return new OccupantDetail("NOT A VALID CHARACTER", Color.BLACK);

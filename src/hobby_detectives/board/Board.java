@@ -148,5 +148,22 @@ public class Board {
         return Optional.ofNullable(position);
     }
 
+    /**
+     * toString() method mostly used for debugging issues with the board
+     * @return String representation of the board
+     */
+    public String toString() {
+        StringBuilder ans = new StringBuilder();
+
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                ans.append(this.board[row][col].render());
+            }
+            ans.append("|\n\n");
+        }
+
+        return ans.toString();
+    }
+
 
 }
