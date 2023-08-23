@@ -14,32 +14,10 @@ import hobby_detectives.gui.views.GameView;
  *   - Updating the model after applying the game logic rules.
  */
 public class GameController {
-    private final GameView gameView;
     private final GameModel model;
 
     public GameController(GameModel model){
         this.model = model;
-        this.gameView = new GameView(this.model, this);
-    }
-
-    /**
-     * Starts the game:
-     * - Sets up the model.
-     * - Tells the model that we are waiting for the first player.
-     */
-    public void start() {
-        this.model.setWaitingForPlayer(true);
-        this.gameView.setVisible(true);
-    }
-
-    /**
-     * Prompts the game to exit by creating a new PromptExitView.
-     */
-    public void promptForGameExit() {
-        var view = new PromptExitView(gameView);
-        // PromptExitView disposes itself if cancelled,
-        // and the program terminates if not,
-        // so we don't need to do anything here
     }
 
     /**

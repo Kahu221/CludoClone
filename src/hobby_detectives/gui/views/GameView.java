@@ -2,6 +2,7 @@ package hobby_detectives.gui.views;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.panels.MapPanelView;
+import hobby_detectives.gui.views.panels.PromptExitView;
 import hobby_detectives.gui.views.panels.StatusPanelView;
 
 import javax.swing.*;
@@ -46,7 +47,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                controller.promptForGameExit();
+                promptForGameExit();
             }
         });
         this.setSize(GAME_FRAME_WIDTH, GAME_FRAME_HEIGHT);
@@ -57,11 +58,18 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
         var game = new JMenu("Game");
         var exit = new JMenuItem("Exit");
-        exit.addActionListener(e -> { this.controller.promptForGameExit(); });
+        exit.addActionListener(e -> { this.promptForGameExit(); });
         game.add(exit);
         menuBar.add(game);
 
         this.setJMenuBar(menuBar);
+    }
+
+    /**
+     * Prompts the game to exit by creating a new PromptExitView.
+     */
+    public void promptForGameExit() {
+        var view = new PromptExitView(this);
     }
 
     public void propertyChange(PropertyChangeEvent event) {
