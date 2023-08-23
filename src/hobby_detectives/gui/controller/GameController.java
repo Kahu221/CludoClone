@@ -151,7 +151,25 @@ public class GameController {
         fringe.offer(new PathItem(this.model.getBoard().read(currentPosition), null, 0, distanceTo(currentPosition, goal)));
         Set<Tile> visited = new HashSet<>();
 
-        return null;
+        while (!fringe.isEmpty()) {
+
+            PathItem currentTile = fringe.poll();
+
+            if (!visited.contains(currentTile.getCurrentTile())) { //if current stop has not been visited
+
+                visited.add(currentTile.getCurrentTile()); //add to visited
+                backPointers.put(currentTile.getCurrentTile(), currentTile.getFromEdge()); //add to backPointers with stop pointing to an edge
+
+//                if (currentTile.getCurrentTile().equals(this.model.getBoard().read(goal))) {
+//                    return reconstructPath(backPointers, start, goal); //if currentStop is goal, return shortest path to goal
+//                }
+//
+//                for (Edge edge : currentTile.getCurrentTile().getForwardEdges()) { //for currentStops edges
+//                    if (!visited.contains(edge.getToTile())) fringe.add(new PathItem(edge.getToTile(), edge, currentTile.getDistFromStart() + 1, distanceTo(edge.getFromTile().getPosition(), goal))); //add to queue
+//                }
+            }
+        }
+        return List.of();
     }
 
     public int distanceTo(Position from, Position goal) {
