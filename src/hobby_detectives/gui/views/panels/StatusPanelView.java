@@ -22,7 +22,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JLabel currentDiceRoll = new JLabel("Loading");
     private final JButton guessButton = new JButton("Make Guess");
     private final JButton makeSolve = new JButton("Solve");
-
     private final JPanel cards = new JPanel();
     private final GameModel model;
 
@@ -37,7 +36,8 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         cards.setAlignmentX(Component.CENTER_ALIGNMENT);
         //set margins
         currentPlayer.setBorder(new EmptyBorder(10,0,5,0));
-        currentDiceRoll.setBorder(new EmptyBorder(10,0,100,0));
+        currentDiceRoll.setBorder(new EmptyBorder(10,0,30,0));
+
 
         //set font sizes
         currentPlayer.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -46,7 +46,16 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         this.add(currentPlayer);
         this.add(currentDiceRoll);
 
+        addButtons();
         this.add(cards);
+    }
+
+    private JPanel addButtons(){
+        JPanel buttonContainer = new JPanel();
+        buttonContainer.add(guessButton);
+        buttonContainer.add(makeSolve);
+        buttonContainer.validate();
+        return buttonContainer;
     }
 
     void redrawPanelView(){
@@ -63,6 +72,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
 
         for(Card c : this.model.getCurrentPlayer().getCards()){
             JPanel newCard = new JPanel();
+            //TODO these cards to not scale with size and need to be fixeed in future
             newCard.setPreferredSize(new Dimension(150,300));
             newCard.add(new JLabel(c.toString()));
             newCard.setBackground(new Color((int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254), (int) Math.floor(Math.random() * 254)));
@@ -73,6 +83,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         cards.repaint();
         this.add(currentPlayer);
         this.add(currentDiceRoll);
+        this.add(addButtons());
         this.add(cards);
         this.revalidate();
         this.repaint();
