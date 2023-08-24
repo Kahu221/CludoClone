@@ -2,12 +2,8 @@ package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
-import hobby_detectives.gui.views.GameView;
-
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class GuessNotificationView extends JPanel {
 
@@ -39,7 +35,4 @@ public class GuessNotificationView extends JPanel {
         this.add(moved);
         this.add(buttons);
     }
-
-
-
 }
