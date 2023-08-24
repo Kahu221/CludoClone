@@ -13,7 +13,7 @@ public class GuessNotificationView extends JPanel {
 
     public GuessNotificationView(GameModel model, GameController controller) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        var moved = new JLabel("You have moved into an Estate, would you like to guess or end your turn?");
+        var moved = new JLabel("You have entered an Estate, would you like to guess or end your turn?");
         moved.setFont(new Font("Arial", Font.PLAIN, 30));
         JPanel buttons = new JPanel();
 
