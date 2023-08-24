@@ -109,6 +109,18 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 this.revalidate();
                 this.repaint();
             }
+            case "attemptingToSolve" -> {
+                if (event.getNewValue().equals(true)) {
+//                    gnView = new GuessAndSolveView(this, this.controller, this.model)
+                    this.remove(this.mapView);
+                    this.remove(this.statusPanel);
+                } else {
+                    addGridComponent(statusPanel, 0, 0, 1, 4);
+                    addGridComponent(mapView, 1, 0, 3, 4);
+                }
+                this.revalidate();
+                this.repaint();
+            }
         }
     }
 

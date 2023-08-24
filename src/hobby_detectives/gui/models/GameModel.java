@@ -79,6 +79,22 @@ public class GameModel {
         this.observable.firePropertyChange("hasMovedIntoEstate", old, false);
     }
 
+    private boolean attemptingToSolve = false;
+
+    public boolean getAttemptingToSolve() {
+        return attemptingToSolve;
+    }
+
+    public void playerIsAttemptingToSolve() {
+        this.attemptingToSolve = true;
+        this.observable.firePropertyChange("attemptingToSolve", false, true);
+    }
+
+    public void resetAttemptingToSolve() {
+        this.attemptingToSolve = false;
+        this.observable.firePropertyChange("attemptingToSolve", true, false);
+    }
+
     private String errorMessage = null;
     public String getErrorMessage() { return this.errorMessage; }
     public void setErrorMessage(String errorMessage) {

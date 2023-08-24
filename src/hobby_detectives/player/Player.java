@@ -16,6 +16,7 @@ public class Player {
     private final List<Card> cards;
 
     private boolean allowedToGuess = true;
+    private boolean hasUsedSolveAttempt = false;
 
     private final String color;
 
@@ -55,6 +56,10 @@ public class Player {
 
     public void addCard(Card c) {
         cards.add(c);
+    }
+
+    public void playerHasAttemptedToSolve() {
+        this.hasUsedSolveAttempt = true;
     }
 
     public String toString() {

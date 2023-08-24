@@ -200,9 +200,6 @@ public class GameController {
     }
 
     public void attemptSolve() {
-
+        this.model.playerIsAttemptingToSolve();
     }
-
-
-
 }
