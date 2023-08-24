@@ -14,7 +14,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class GuessAndSolveView{
-    ArrayList<JButton> estateButtons = new ArrayList<>();
     ArrayList<JButton> weaponButtons = new ArrayList<>();
     ArrayList <JButton> characterButtons = new ArrayList<>();
     private final GameView parent;
@@ -35,15 +34,14 @@ public class GuessAndSolveView{
         frame.add(title);
         //each container to hold each type of card (each one is filled with a button for each card type)
         var estateCardsContainer = new JPanel();
-        for(EstateType e : EstateType.values()){
-            JButton currentEstate = new JButton(e.name());
-            currentEstate.setPreferredSize(new Dimension(130,200));
-            currentEstate.addActionListener(clicked -> {
-                attemptToChooseCard(currentEstate.getText());
-            });
-            estateButtons.add(currentEstate);
-            estateCardsContainer.add(currentEstate);
-        }
+
+        /* Manually guess the EstateCard for the Estate the player is currently in */
+        JButton currentEstate = new JButton(model.getEstateCardForCurrentEstate().estate.name());
+        currentEstate.setPreferredSize(new Dimension(130,200));
+        currentEstate.setBackground(Color.green);
+        chosenCards.add(model.getEstateCardForCurrentEstate());
+        estateCardsContainer.add(currentEstate);
+
         var weaponCardsContainer = new JPanel();
         for(WeaponType w : WeaponType.values()){
             JButton currentWeapon = new JButton(w.name());
@@ -75,13 +73,8 @@ public class GuessAndSolveView{
     //TODO logic here can defo be done better
     public void attemptToChooseCard(String cardName){
         Card chosenCard = model.allCards.get(cardName);
-        if(chosenCard instanceof EstateCard && chosenCards.stream().noneMatch(c -> c instanceof EstateCard)) {
-            chosenCards.add(chosenCard);
-            for(JButton b : estateButtons)
-                if(!b.getText().equals(cardName)) b.setEnabled(false);
-                else b.setBackground(Color.green);
-        }
-        else if(chosenCard instanceof WeaponCard && chosenCards.stream().noneMatch(c -> c instanceof WeaponCard)){
+
+        if(chosenCard instanceof WeaponCard && chosenCards.stream().noneMatch(c -> c instanceof WeaponCard)){
             chosenCards.add(chosenCard);
             for(JButton b : weaponButtons)
                 if(!b.getText().equals(cardName)) b.setEnabled(false);
@@ -102,7 +95,7 @@ public class GuessAndSolveView{
         frame.dispose();
         return new CardTriplet(
                 (WeaponCard) chosenCards.stream().filter(c -> c instanceof WeaponCard).findFirst().orElse(null),
-                (EstateCard) chosenCards.stream().filter(c -> c instanceof EstateCard).findFirst().orElse(null),
+                this.model.getEstateCardForCurrentEstate(),
                 (PlayerCard) chosenCards.stream().filter(c -> c instanceof PlayerCard).findFirst().orElse(null)
         );
 

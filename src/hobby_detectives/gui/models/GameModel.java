@@ -119,6 +119,13 @@ public class GameModel {
     /** Value for Estate entered when player enters an estate */
     private EstateType estateCurrentPlayerIsIn;
     public EstateType getEstateCurrentPlayerIsIn() { return estateCurrentPlayerIsIn; }
+    public EstateCard getEstateCardForCurrentEstate() {
+        return (EstateCard) allCards.entrySet().stream()
+                .filter(kvPair -> kvPair.getKey().equals(estateCurrentPlayerIsIn.name()))
+                .findFirst()
+                .get()
+                .getValue();
+    }
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.

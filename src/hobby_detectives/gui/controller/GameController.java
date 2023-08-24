@@ -196,7 +196,6 @@ public class GameController {
         model.setCurrentGuess(guessedCards);
     }
 
-
     public void attemptSolve() {
 
     }
