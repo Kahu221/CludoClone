@@ -186,9 +186,14 @@ public class GameController {
         this.model.setCurrentPlayer(this.model.players.peek());
         this.model.setWaitingForPlayer(true);
     }
-//
+
     public void promptPlayerForGuess() {
         this.model.changeGuessState(true);
+    }
+
+    public void confirmedGuess(CardTriplet guessedCards){
+        model.changeGuessState(false);
+        model.setCurrentGuess(guessedCards);
     }
 
 //

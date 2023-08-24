@@ -15,11 +15,18 @@ import java.util.*;
  */
 public class GameModel {
     private boolean wantsToGuess = false;
+    private CardTriplet currentGuess;
     public void changeGuessState(boolean a){
         boolean old = this.wantsToGuess;
         this.observable.firePropertyChange("wantsToGuess", old, a);
         this.wantsToGuess = a;
     }
+
+    public void setCurrentGuess(CardTriplet currentGuess) {
+        this.currentGuess = currentGuess;
+        System.out.println("the current guess is :  " + currentGuess.toString());
+    }
+
     public boolean getWantToGuess(){return wantsToGuess;}
     private final PropertyChangeSupport observable = new PropertyChangeSupport(this);
 
