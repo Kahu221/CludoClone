@@ -151,13 +151,13 @@ public class GameController {
         } else if (path.size() > this.model.getDiceRoll()) {
             this.model.setErrorMessage("You need " + path.size() + " moves." + " You only have " + this.model.getDiceRoll() + " moves.");
         } else {
-            if (desiredTile instanceof Estate e) {
+            if (desiredTile instanceof Estate e) { /* TODO: THIS IF STATEMENT JUST GETS IGNORED? */
                 this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
                 // Check if the player is attempting to move into an estate fill tile.
             } else if (desiredTile instanceof Estate.EstateFillTile eft) {
                 boolean moved = this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
                 if (moved) {
-                    this.model.playerHasMovedIntoEstate();
+                    this.model.playerHasMovedIntoEstate(eft.parent.type);
                 } else {
                     this.model.setErrorMessage("You can not move into the Estate");
                 }

@@ -1,9 +1,8 @@
 package hobby_detectives.gui.models;
 
 import hobby_detectives.board.Board;
+import hobby_detectives.data.EstateType;
 import hobby_detectives.game.*;
-import hobby_detectives.gui.views.GameView;
-import hobby_detectives.gui.views.panels.GuessNotificationView;
 import hobby_detectives.player.Player;
 
 import java.beans.PropertyChangeListener;
@@ -68,8 +67,9 @@ public class GameModel {
         return this.hasMovedIntoEstate;
     }
 
-    public void playerHasMovedIntoEstate() {
+    public void playerHasMovedIntoEstate(EstateType estateType) {
         this.hasMovedIntoEstate = true;
+        this.estateCurrentPlayerIsIn = estateType;
         this.observable.firePropertyChange("hasMovedIntoEstate", false, true);
     }
 
@@ -116,6 +116,9 @@ public class GameModel {
         board = new Board(24, this);
     }
 
+    /** Value for Estate entered when player enters an estate */
+    private EstateType estateCurrentPlayerIsIn;
+    public EstateType getEstateCurrentPlayerIsIn() { return estateCurrentPlayerIsIn; }
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.
