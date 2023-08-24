@@ -33,7 +33,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
     public GameView(GameModel model, GameController controller) {
         this.model = model;
         this.controller = controller;
-        statusPanel = new StatusPanelView(model, controller);
+        statusPanel = new StatusPanelView(model, controller, this);
         mapView = new MapPanelView(model, controller);
         this.model.addPropertyChangeListener(this);
 
