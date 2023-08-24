@@ -52,8 +52,11 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         //add actionListner to buttons
         solveButton.addActionListener(
                 onclick -> {
-                    System.out.println("This works");
-                    this.controller.attemptSolve();
+                    if (this.model.getCurrentPlayer().isAllowedToSolve()) {
+                        this.controller.attemptSolve();
+                    } else {
+                        this.model.setErrorMessage("You have already attempted to solve!");
+                    }
         });
         endTurnButton.addActionListener(
                 onclick -> {
