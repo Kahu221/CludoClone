@@ -121,6 +121,10 @@ public class GameController {
         var desiredTile = this.model.getBoard().read(desiredPosition);
 
         // Check if the player is attempting to move into an estate.
+        if(player.getTile().getPosition().equals(desiredPosition)) {
+            this.model.setErrorMessage("Cannot move onto yourself.");
+            return;
+        }
 
         var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
         if (path.isEmpty()) {
