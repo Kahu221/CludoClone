@@ -24,6 +24,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
     private final JMenuBar menuBar;
 
     private WaitingForPlayerView wfpView;
+    private GuessNotificationView gnView;
 
     private final SetupView setupView;
 
@@ -81,6 +82,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
         switch (propName){
             case "waitingForPlayer" -> {
                 if ((Boolean) event.getNewValue()) {
+                    if (gnView != null) this.remove(gnView);
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
                     this.wfpView = new WaitingForPlayerView(this.model, this.controller);
@@ -95,10 +97,17 @@ public class GameView extends JFrame implements PropertyChangeListener {
             }
             case "hasMovedIntoEstate" -> {
                 if (event.getNewValue().equals(true)) {
-                    this.revalidate();
-                    this.repaint();
-                    new GuessNotificationView(this);
+                    this.remove(this.mapView);
+                    this.remove(this.statusPanel);
+                    this.gnView = new GuessNotificationView(this.model, this.controller);
+                    this.add(this.gnView);
+                } else {
+                    this.remove(this.gnView);
+                    addGridComponent(statusPanel, 0, 0, 1, 4);
+                    addGridComponent(mapView, 1, 0, 3, 4);
                 }
+                this.revalidate();
+                this.repaint();
             }
         }
     }

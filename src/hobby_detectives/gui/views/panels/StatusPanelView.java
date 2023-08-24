@@ -26,7 +26,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JLabel currentPlayer = new JLabel("Loading");
     private final JLabel currentDiceRoll = new JLabel("Loading");
     private final JLabel errorMessage = new JLabel("");
-    private final JButton guessButton = new JButton("Make Guess");
     private final JButton solveButton = new JButton("Solve");
     private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
@@ -51,10 +50,8 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         errorMessage.setBorder(new EmptyBorder(10,0,30,0));
 
         //add actionListner to buttons
-        guessButton.addActionListener(onclick -> {
-            this.controller.promptPlayerForGuess();
-        });
-        solveButton.addActionListener(onclick -> {
+        solveButton.addActionListener(
+                onclick -> {
             this.controller.attemptSolve();
         });
         endTurnButton.addActionListener(
@@ -79,7 +76,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private JPanel addButtons(){
 
         JPanel buttonContainer = new JPanel();
-        buttonContainer.add(guessButton);
         buttonContainer.add(solveButton);
         buttonContainer.add(endTurnButton);
         buttonContainer.validate();

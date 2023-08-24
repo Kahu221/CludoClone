@@ -1,5 +1,6 @@
 package hobby_detectives.gui.views.panels;
 
+import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
 
@@ -8,18 +9,35 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class GuessNotificationView {
-    private final GameView parent;
+public class GuessNotificationView extends JPanel {
 
-    public GuessNotificationView(GameView parent) {
-        this.parent = parent;
-        var frame = new JDialog(this.parent, "Would you like to make a guess?");
-        frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-        JLabel title = new JLabel("Would you like to make a guess or end your turn?");
-        title.setFont(new Font("Arial", Font.PLAIN, 30));
-        frame.add(title);
-        frame.pack();
-        frame.setVisible(true);
+    public GuessNotificationView(GameModel model, GameController controller) {
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        var moved = new JLabel("You have moved into an Estate, would you like to guess or end your turn?");
+        moved.setFont(new Font("Arial", Font.PLAIN, 30));
+        JPanel buttons = new JPanel();
+
+        JButton guess = new JButton(
+                "Make Guess"
+        );
+
+        JButton endTurn = new JButton(
+                "End Turn"
+        );
+
+        buttons.add(guess);
+        buttons.add(endTurn);
+
+        guess.addActionListener(onClick -> {
+            controller.promptPlayerForGuess();
+        });
+
+        endTurn.addActionListener(onClick -> {
+            controller.endTurn();
+        });
+
+        this.add(moved);
+        this.add(buttons);
     }
 
 
