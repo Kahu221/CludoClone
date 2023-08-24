@@ -99,6 +99,7 @@ public class Board {
         // Player is at a door.
         if (e.doors.stream().anyMatch(d -> d.add(e.getPosition()).equals(possibleTranslate))) {
             if (e.occupant.isEmpty()) {
+                p.getTile().setPlayer(null);
                 e.setPlayer(p);
                 p.setTile(e);
 
@@ -108,7 +109,7 @@ public class Board {
                 if(!weaponAlreadyInHand) {
                     p.getCards().add(newWeaponCard);
                 }
-
+                System.out.println("we have moved in");
                 //game.promptPlayerForGuess(p, e);
                 return true;
             }

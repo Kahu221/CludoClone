@@ -22,4 +22,6 @@ public class GuessNotificationView {
         frame.setVisible(true);
     }
 
+
+
 }

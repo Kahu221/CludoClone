@@ -139,10 +139,7 @@ public class GameController {
             } else if (desiredTile instanceof Estate.EstateFillTile eft) {
                 boolean moved = this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
                 if (moved) {
-                    player.getTile().setPlayer(null);
-
                     this.model.playerHasMovedIntoEstate();
-                    System.out.println("Moved into Estate");
                 } else {
                     this.model.setErrorMessage("You can not move into the Estate");
                 }
@@ -154,10 +151,9 @@ public class GameController {
             this.model.useNumberOfMoves(path.size());
             this.model.notifyBoardUpdate();
 
-            if (this.model.getDiceRoll() < 1 && this.model.getHasMovedIntoEstate()) {
-                System.out.println("Here");
-            } else {
-                System.out.println("Move ended");
+            if(this.model.getDiceRoll() < 1 && model.getHasMovedIntoEstate()) {
+                this.model.setErrorMessage("Please choose to make a guess or end turn");
+            } else if (this.model.getDiceRoll() < 1) {
                 endTurn();
             }
         }
