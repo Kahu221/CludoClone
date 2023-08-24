@@ -4,10 +4,7 @@ import hobby_detectives.board.world.Estate;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
-import hobby_detectives.game.Card;
-import hobby_detectives.game.EstateCard;
-import hobby_detectives.game.PlayerCard;
-import hobby_detectives.game.WeaponCard;
+import hobby_detectives.game.*;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
@@ -23,10 +20,14 @@ public class GuessAndSolveView{
     private final GameView parent;
     private GameModel model;
     private ArrayList<Card> chosenCards = new ArrayList<>();
+
+    private JDialog frame;
+    private GameController controller;
     public GuessAndSolveView(GameView parent, GameController controller, GameModel model) {
+        this.controller = controller;
         this.model = model;
         this.parent = parent;
-        var frame = new JDialog(this.parent, "Make Guess");
+        frame = new JDialog(this.parent, "Make Guess");
         frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         JLabel title = new JLabel("Please pick one of each Card you would like to guess");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -52,7 +53,6 @@ public class GuessAndSolveView{
             });
             weaponButtons.add(currentWeapon);
             weaponCardsContainer.add(currentWeapon);
-
         }
         var personCardsContainer = new JPanel();
         for(CharacterType c : CharacterType.values()){
@@ -70,8 +70,6 @@ public class GuessAndSolveView{
         frame.getContentPane().add(personCardsContainer);
         frame.pack();
         frame.setVisible(true);
-
-        render();
     }
 
     //TODO logic here can defo be done better
@@ -96,9 +94,18 @@ public class GuessAndSolveView{
                 else b.setBackground(Color.green);
         }
         System.out.println(chosenCards);
+        if(chosenCards.size() == 3) controller.confirmedGuess(returnGuessedCards());
+    }
+
+    //TODO THIS IS SO UGLY
+    public CardTriplet returnGuessedCards(){
+        frame.dispose();
+        return new CardTriplet(
+                (WeaponCard) chosenCards.stream().filter(c -> c instanceof WeaponCard).findFirst().orElse(null),
+                (EstateCard) chosenCards.stream().filter(c -> c instanceof EstateCard).findFirst().orElse(null),
+                (PlayerCard) chosenCards.stream().filter(c -> c instanceof PlayerCard).findFirst().orElse(null)
+        );
 
     }
-    public void render(){
 
-    }
 }
