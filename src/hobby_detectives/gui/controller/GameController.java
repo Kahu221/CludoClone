@@ -130,6 +130,10 @@ public class GameController {
         }
 
         if(player.getTile() instanceof Estate e) {
+            if (desiredTile instanceof Estate || desiredTile instanceof Estate.EstateFillTile) {
+                this.model.setErrorMessage("You cannot move into the Estate");
+                return;
+            }
             List<Position> absoluteDoorPositions = e.doors.stream()
                     .map(oldPosition -> oldPosition.add(e.getPosition())).toList();
 
@@ -170,9 +174,7 @@ public class GameController {
             this.model.useNumberOfMoves(path.size());
             this.model.notifyBoardUpdate();
 
-            if(this.model.getDiceRoll() < 1 && model.getHasMovedIntoEstate()) {
-                this.model.setErrorMessage("Please choose to make a guess or end turn");
-            } else if (this.model.getDiceRoll() < 1) {
+            if (this.model.getDiceRoll() < 1) {
                 endTurn();
             }
         }
