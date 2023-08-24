@@ -109,8 +109,6 @@ public class Board {
                 if(!weaponAlreadyInHand) {
                     p.getCards().add(newWeaponCard);
                 }
-                System.out.println("we have moved in");
-                //game.promptPlayerForGuess(p, e);
                 return true;
             }
         }

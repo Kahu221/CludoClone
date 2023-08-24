@@ -160,6 +160,7 @@ public class GameController {
                     this.model.playerHasMovedIntoEstate(eft.parent.type);
                 } else {
                     this.model.setErrorMessage("You can not move into the Estate");
+                    return;
                 }
             } else {
                 player.getTile().setPlayer(null);

@@ -4,6 +4,7 @@ import hobby_detectives.data.Direction;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
+import hobby_detectives.player.Player;
 
 import javax.swing.*;
 import java.util.ArrayList;
