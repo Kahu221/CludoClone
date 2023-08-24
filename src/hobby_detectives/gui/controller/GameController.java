@@ -5,6 +5,7 @@ import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
 import hobby_detectives.engine.Position;
 import hobby_detectives.game.*;
+import hobby_detectives.gui.controller.pathing.BoardEdge;
 import hobby_detectives.gui.controller.pathing.PathAlgorithm;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.player.Player;
@@ -121,13 +122,30 @@ public class GameController {
         var player = this.model.getCurrentPlayer();
         var desiredTile = this.model.getBoard().read(desiredPosition);
 
-        // Check if the player is attempting to move into an estate.
-        if(player.getTile().getPosition().equals(desiredPosition)) {
+        var playerPosition = player.getTile().getPosition();
+
+        if(playerPosition.equals(desiredPosition)) {
             this.model.setErrorMessage("Cannot move onto yourself.");
             return;
         }
 
-        var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
+        if(player.getTile() instanceof Estate e) {
+            List<Position> absoluteDoorPositions = e.doors.stream()
+                    .map(oldPosition -> oldPosition.add(e.getPosition())).toList();
+
+            List<List<BoardEdge>> possiblePaths = absoluteDoorPositions.stream()
+                    .map(doorPosition ->
+                            PathAlgorithm.findShortestPath(this.model.getBoard(), doorPosition, desiredPosition))
+                    .toList();
+
+            List<BoardEdge> shortestPath = possiblePaths.stream()
+                    .min(Comparator.comparing(List::size))
+                    .orElse(List.of());
+
+            playerPosition = absoluteDoorPositions.get(possiblePaths.indexOf(shortestPath));
+        }
+
+        var path = PathAlgorithm.findShortestPath(this.model.getBoard(), playerPosition, desiredPosition);
         if (path.isEmpty()) {
             this.model.setErrorMessage("You can't move there.");
         } else if (path.size() > this.model.getDiceRoll()) {

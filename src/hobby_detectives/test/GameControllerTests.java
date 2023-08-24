@@ -57,7 +57,7 @@ public class GameControllerTests {
                 testPlayerPosition.x() + 4, testPlayerPosition.y() - 2);
         this.controller.tryMovePlayer(newinValidPlayerPosition);
 
-        assertEquals("You need " + 6 + " moves.", model.getErrorMessage());
+        assertEquals("You need " + 6 + " moves." + " You only have " + 4 + " moves.", model.getErrorMessage());
         assertNotEquals(testPlayer.getTile().getPosition(), newinValidPlayerPosition);
         assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
     }
