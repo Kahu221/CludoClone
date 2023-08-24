@@ -3,6 +3,7 @@ package hobby_detectives.gui.views.panels;
 import hobby_detectives.game.Card;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
+import hobby_detectives.gui.views.GameView;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -28,9 +29,11 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JButton solveButton = new JButton("Solve");
     private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
+    private GameView parent;
 
 
-    public StatusPanelView(GameModel model, GameController controller) {
+    public StatusPanelView(GameModel model, GameController controller, GameView parent) {
+        this.parent = parent;
         this.controller = controller;
         this.model = model;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -118,7 +121,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void drawGuess(){
-
+        GuessAndSolveView guessAndSolvePopUp = new GuessAndSolveView(this.parent, this.controller, this.model);
 
     }
 

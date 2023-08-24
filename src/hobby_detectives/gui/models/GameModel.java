@@ -16,7 +16,8 @@ import java.util.*;
 public class GameModel {
     private boolean wantsToGuess = false;
     public void changeGuessState(boolean a){
-        this.observable.firePropertyChange("wantsToGuess", wantsToGuess, a);
+        boolean old = this.wantsToGuess;
+        this.observable.firePropertyChange("wantsToGuess", old, a);
         this.wantsToGuess = a;
     }
     public boolean getWantToGuess(){return wantsToGuess;}
