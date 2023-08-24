@@ -116,16 +116,21 @@ public class GameController {
     }
 
     public void tryMovePlayer(Position desiredPosition) {
+        this.model.setErrorMessage("");
         var player = this.model.getCurrentPlayer();
         var desiredTile = this.model.getBoard().read(desiredPosition);
 
         // Check if the player is attempting to move into an estate.
+        if(player.getTile().getPosition().equals(desiredPosition)) {
+            this.model.setErrorMessage("Cannot move onto yourself.");
+            return;
+        }
 
         var path = PathAlgorithm.findShortestPath(this.model.getBoard(), player.getTile().getPosition(), desiredPosition);
         if (path.isEmpty()) {
             this.model.setErrorMessage("You can't move there.");
         } else if (path.size() > this.model.getDiceRoll()) {
-            this.model.setErrorMessage("You need " + path.size() + " moves.");
+            this.model.setErrorMessage("You need " + path.size() + " moves." + " You only have " + this.model.getDiceRoll() + " moves.");
         } else {
             if (desiredTile instanceof Estate e) {
                 this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);

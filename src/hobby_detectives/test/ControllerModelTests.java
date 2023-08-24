@@ -29,7 +29,6 @@ public class ControllerModelTests {
 				new Player(CharacterType.PERCY, new ArrayList<>(), "")
 		));
 		this.model.setWaitingForPlayer(true);
-
 	}
 
 	@Test
