@@ -1,17 +1,14 @@
 package hobby_detectives.gui.models;
 
 import hobby_detectives.board.Board;
-import hobby_detectives.board.world.Estate;
-import hobby_detectives.board.world.Tile;
-import hobby_detectives.data.*;
-import hobby_detectives.engine.Position;
 import hobby_detectives.game.*;
+import hobby_detectives.gui.views.GameView;
+import hobby_detectives.gui.views.panels.GuessNotificationView;
 import hobby_detectives.player.Player;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * Holds the data for the abstract game.
@@ -58,6 +55,22 @@ public class GameModel {
         this.observable.firePropertyChange("waitingForPlayer", old, wfp);
     }
 
+    private boolean hasMovedIntoEstate = false;
+    public boolean getHasMovedIntoEstate() {
+        return this.hasMovedIntoEstate;
+    }
+
+    public void playerHasMovedIntoEstate() {
+        this.hasMovedIntoEstate = true;
+        this.observable.firePropertyChange("hasMovedIntoEstate", false, true);
+    }
+
+    public void resetHasMovedIntoEstate() {
+        boolean old = this.hasMovedIntoEstate;
+        this.hasMovedIntoEstate = false;
+        this.observable.firePropertyChange("hasMovedIntoEstate", old, false);
+    }
+
     private String errorMessage = null;
     public String getErrorMessage() { return this.errorMessage; }
     public void setErrorMessage(String errorMessage) {
@@ -65,6 +78,7 @@ public class GameModel {
         this.errorMessage = errorMessage;
         this.observable.firePropertyChange("errorMessage", old, this.errorMessage);
     }
+
 
     private final Board board;
     public Board getBoard() { return this.board; }
@@ -93,7 +107,6 @@ public class GameModel {
     public GameModel() {
         board = new Board(24, this);
     }
-
 
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt

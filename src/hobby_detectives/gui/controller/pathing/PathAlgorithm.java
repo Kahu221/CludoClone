@@ -79,6 +79,7 @@ public class PathAlgorithm {
         while (true) {
             BoardEdge to = e;
             BoardEdge from = backpointers.get(to.from());
+
             output.add(to);
             if (to.from().equals(start)) {
                 Collections.reverse(output);

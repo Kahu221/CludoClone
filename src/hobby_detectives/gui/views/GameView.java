@@ -1,10 +1,7 @@
 package hobby_detectives.gui.views;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
-import hobby_detectives.gui.views.panels.MapPanelView;
-import hobby_detectives.gui.views.panels.PromptExitView;
-import hobby_detectives.gui.views.panels.SetupView;
-import hobby_detectives.gui.views.panels.StatusPanelView;
+import hobby_detectives.gui.views.panels.*;
 import hobby_detectives.gui.views.transitive.WaitingForPlayerView;
 
 import javax.swing.*;
@@ -96,7 +93,13 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 this.revalidate();
                 this.repaint();
             }
-
+            case "hasMovedIntoEstate" -> {
+                if (event.getNewValue().equals(true)) {
+                    this.revalidate();
+                    this.repaint();
+                    new GuessNotificationView(this);
+                }
+            }
         }
     }
 
@@ -109,4 +112,9 @@ public class GameView extends JFrame implements PropertyChangeListener {
         constraints.fill = GridBagConstraints.BOTH;
         this.add(component, constraints);
     }
+
+    public GameModel getModel() {
+        return model;
+    }
+
 }

@@ -116,6 +116,7 @@ public class GameController {
     }
 
     public void tryMovePlayer(Position desiredPosition) {
+        this.model.resetHasMovedIntoEstate();
         this.model.setErrorMessage("");
         var player = this.model.getCurrentPlayer();
         var desiredTile = this.model.getBoard().read(desiredPosition);
@@ -136,8 +137,15 @@ public class GameController {
                 this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, e);
                 // Check if the player is attempting to move into an estate fill tile.
             } else if (desiredTile instanceof Estate.EstateFillTile eft) {
-                player.getTile().setPlayer(null);
-                this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
+                boolean moved = this.model.getBoard().tryMoveIntoEstate(player, desiredPosition, eft.parent);
+                if (moved) {
+                    player.getTile().setPlayer(null);
+
+                    this.model.playerHasMovedIntoEstate();
+                    System.out.println("Moved into Estate");
+                } else {
+                    this.model.setErrorMessage("You can not move into the Estate");
+                }
             } else {
                 player.getTile().setPlayer(null);
                 desiredTile.setPlayer(player);
@@ -146,7 +154,12 @@ public class GameController {
             this.model.useNumberOfMoves(path.size());
             this.model.notifyBoardUpdate();
 
-            if(this.model.getDiceRoll() < 1) endTurn();
+            if (this.model.getDiceRoll() < 1 && this.model.getHasMovedIntoEstate()) {
+                System.out.println("Here");
+            } else {
+                System.out.println("Move ended");
+                endTurn();
+            }
         }
     }
 

@@ -69,6 +69,7 @@ public class MapPanelView extends JPanel implements PropertyChangeListener {
                 }
                 tileOnBoard.setBorder(null);
                 tileOnBoard.addActionListener(onclick -> {
+
                     controller.tryMovePlayer(currentPosition);
                 });
 
