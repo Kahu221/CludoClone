@@ -89,7 +89,17 @@ public class GameControllerTests {
         assertEquals(model.getCurrentPlayer().getTile().getPosition(), testPlayerPosition);
     }
     @Test
-    public void testPlayerCanEnterAnEstateThroughTheDoor() {}
+    public void testPlayerCanEnterAnEstateThroughTheDoorWithExactNumberOfMoves() {
+        setDiceRoll(7);
+        Player testPlayer = model.getCurrentPlayer();
+
+        Position testPlayerPosition = testPlayer.getTile().getPosition();
+        Position newinValidPlayerPosition = new Position(
+                testPlayerPosition.x() - 3, testPlayerPosition.y() - 4);
+        this.controller.tryMovePlayer(newinValidPlayerPosition);
+
+
+    }
     @Test
     public void testThatPlayerCanOnlyLeaveEstateInCorrectDirection() {}
 
