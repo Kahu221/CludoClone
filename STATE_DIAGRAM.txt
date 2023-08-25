@@ -14,19 +14,22 @@ class DetectivesGameSM {
       }
     }
    
-    
     player_turn {
       entry / {
         drawMap();
         drawStatus();
       }
       waiting_for_input {
-        [canGuess() && hasMoves()] clicks_on_estate -> guess_popup;
+        [canGuess() && hasMoves()] clicks_on_estate -> ask_player_for_guess;
         //[hasMoves()] click_on_empty_tile -> map_view;
 
         clicks_exit_button -> exited;
 
         end_turn -> waiting_for_player_view;
+      }
+      ask_player_for_guess {
+        wants_to_guess -> guess_popup;
+        does_not_want_to_guess -> waiting_for_player_view;
       }
       map_view {
         not_visible {
@@ -46,14 +49,19 @@ class DetectivesGameSM {
   	  }
     }
     
+    
     guess_popup {
       visible {
         waiting_for_player_to_select {
           player_confirms_selection -> waiting_for_next_player;
         }
+        waiting_for_player_to_select_refute {
+          no_more_players -> show_refutation_result;
+          next_player_exists -> waiting_for_player_to_select_refute;
+        }
         waiting_for_next_player {
           no_more_players -> show_refutation_result;
-          player_confirms_presence -> waiting_for_player_to_select;
+          player_confirms_presence -> waiting_for_player_to_select_refute;
         }
         show_refutation_result {
           player_is_correct -> exited;
