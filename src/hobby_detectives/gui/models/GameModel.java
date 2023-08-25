@@ -240,8 +240,6 @@ public class GameModel {
     public void setPolling(boolean polling) {
         this.polling = polling;
     }
-    public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
-    public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
     public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
 
 
