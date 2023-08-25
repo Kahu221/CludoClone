@@ -1,9 +1,7 @@
 class DetectivesGameSM {
   game_view {
     setup_view {
-      visible {
-      	confirm_setup -> waiting_for_player_view;
-      }
+      confirm_setup -> waiting_for_player_view;
     }
     waiting_for_player_view {
       visible {
@@ -51,22 +49,20 @@ class DetectivesGameSM {
     
     
     guess_popup {
-      visible {
-        waiting_for_player_to_select {
-          player_confirms_selection -> waiting_for_next_player;
-        }
-        waiting_for_player_to_select_refute {
-          no_more_players -> show_refutation_result;
-          next_player_exists -> waiting_for_player_to_select_refute;
-        }
-        waiting_for_next_player {
-          no_more_players -> show_refutation_result;
-          player_confirms_presence -> waiting_for_player_to_select_refute;
-        }
-        show_refutation_result {
-          player_is_correct -> exited;
-          player_is_incorrect -> waiting_for_player_view;
-        }
+      waiting_for_player_to_select {
+        player_confirms_selection -> waiting_for_next_player;
+      }
+      waiting_for_player_to_select_refute {
+        no_more_players -> show_refutation_result;
+        next_player_exists -> waiting_for_player_to_select_refute;
+      }
+      waiting_for_next_player {
+        no_more_players -> show_refutation_result;
+        player_confirms_presence -> waiting_for_player_to_select_refute;
+      }
+      show_refutation_result {
+        player_is_correct -> exited;
+        player_is_incorrect -> waiting_for_player_view;
       }
     }
   }
