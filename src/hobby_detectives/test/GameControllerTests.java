@@ -97,8 +97,6 @@ public class GameControllerTests {
         Position newinValidPlayerPosition = new Position(
                 testPlayerPosition.x() - 3, testPlayerPosition.y() - 4);
         this.controller.tryMovePlayer(newinValidPlayerPosition);
-
-
     }
     @Test
     public void testThatPlayerCanOnlyLeaveEstateInCorrectDirection() {}
