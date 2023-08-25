@@ -4,10 +4,7 @@ import hobby_detectives.board.world.Estate;
 import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
-import hobby_detectives.game.Card;
-import hobby_detectives.game.CardTriplet;
-import hobby_detectives.game.PlayerCard;
-import hobby_detectives.game.WeaponCard;
+import hobby_detectives.game.*;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
@@ -23,8 +20,11 @@ public class SolvePanelView extends JPanel {
     private final GameController controller;
 
     private final ArrayList<Card> solveCards = new ArrayList<>();
+
+    private final ArrayList<JButton> estateButtons = new ArrayList<>();
     private final ArrayList<JButton> weaponButtons = new ArrayList<>();
     private final ArrayList <JButton> characterButtons = new ArrayList<>();
+
 
     public SolvePanelView(GameView parent, GameModel model, GameController controller) {
         this.parent = parent;
@@ -46,7 +46,7 @@ public class SolvePanelView extends JPanel {
             currentEstate.addActionListener(clicked -> {
                 attemptToChooseCard(currentEstate.getText());
             });
-            estateCardsContainer.add(currentEstate);
+            estateButtons.add(currentEstate);
             estateCardsContainer.add(currentEstate);
         }
 
@@ -83,8 +83,13 @@ public class SolvePanelView extends JPanel {
     //TODO logic here can defo be done better
     public void attemptToChooseCard(String cardName){
         Card chosenCard = model.allCards.get(cardName);
-
-        if(chosenCard instanceof WeaponCard && solveCards.stream().noneMatch(c -> c instanceof WeaponCard)){
+        if(chosenCard instanceof EstateCard && solveCards.stream().noneMatch(c -> c instanceof EstateCard)) {
+            solveCards.add(chosenCard);
+            for(JButton b : estateButtons)
+                if(!b.getText().equals(cardName)) b.setEnabled(false);
+                else b.setBackground(Color.green);
+        }
+        else if(chosenCard instanceof WeaponCard && solveCards.stream().noneMatch(c -> c instanceof WeaponCard)){
             solveCards.add(chosenCard);
             for(JButton b : weaponButtons)
                 if(!b.getText().equals(cardName)) b.setEnabled(false);
