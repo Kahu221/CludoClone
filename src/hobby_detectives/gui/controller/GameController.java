@@ -200,6 +200,7 @@ public class GameController {
     }
 
     public void attemptSolve() {
+        System.out.println("farts");
         this.model.playerIsAttemptingToSolve();
     }
 }

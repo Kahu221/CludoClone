@@ -74,9 +74,8 @@ public class GameModel {
     }
 
     public void resetHasMovedIntoEstate() {
-        boolean old = this.hasMovedIntoEstate;
         this.hasMovedIntoEstate = false;
-        this.observable.firePropertyChange("hasMovedIntoEstate", old, false);
+        this.observable.firePropertyChange("hasMovedIntoEstate", true, false);
     }
 
     private boolean attemptingToSolve = false;
