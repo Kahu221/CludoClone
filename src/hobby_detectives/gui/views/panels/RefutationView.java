@@ -39,7 +39,6 @@ public class RefutationView extends JPanel {
                     this.gameController.endRefutationTurn();
                 }
         );
-
         this.add(buttons);
         this.add(moved);
     }

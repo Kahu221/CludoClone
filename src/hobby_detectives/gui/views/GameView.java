@@ -30,13 +30,13 @@ public class GameView extends JFrame implements PropertyChangeListener {
     private WaitingForPlayerView wfpView;
     private GuessNotificationView gnView;
     private SolvePanelView spView;
+    private RefutationView rfView;
+
+
 
     private final SetupView setupView;
 
     public GameView(GameModel model, GameController controller) {
-        ArrayList<Card> test = new ArrayList<>();
-        test.add(new PlayerCard(CharacterType.BERT));
-        refutedCardsPopUpSetup(test);
         this.model = model;
         this.controller = controller;
         statusPanel = new StatusPanelView(model, controller, this);
@@ -94,8 +94,9 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     this.remove(this.statusPanel);
                     this.gnView = new GuessNotificationView(this.model, this.controller);
                     this.add(this.gnView);
+
                 } else {
-                    if (gnView != null) this.remove(gnView);
+                    this.remove(this.wfpView);
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }
@@ -110,10 +111,19 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     this.remove(this.statusPanel);
                     this.wfpView = new WaitingForPlayerView(this.model, this.controller);
                     this.add(this.wfpView);
+                    if (this.rfView != null) { this.remove(this.rfView); }
                 } else {
-                    this.remove(this.wfpView);
-                    addGridComponent(statusPanel, 0, 0, 1, 4);
-                    addGridComponent(mapView, 1, 0, 3, 4);
+                    if(this.model.getPlayersToRefute().isEmpty()) {
+                        this.remove(this.wfpView);
+                        addGridComponent(statusPanel, 0, 0, 1, 4);
+                        addGridComponent(mapView, 1, 0, 3, 4);
+                    }
+                    else {
+                        this.remove(this.wfpView);
+                        this.rfView = new RefutationView(this.model, this.controller);
+                        this.add(rfView);
+                    }
+
                 }
                 this.revalidate();
                 this.repaint();
