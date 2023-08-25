@@ -117,7 +117,7 @@ public class GameController {
             this.model.rollDice();
         }
         else {
-            this.model.getNextPlayerToRefute();
+            //this.model.pollNextPlayerToRefute();
         }
 
     }
@@ -199,7 +199,14 @@ public class GameController {
 
     public void endRefutationTurn() {
         this.model.setErrorMessage("");
-        this.model.setCurrentPlayer(this.model.getNextPlayerToRefute());
+
+        if(this.model.peekNextPlayerToRefute().isEmpty()) {
+            this.model.setCurrentPlayer(this.model.players.peek());
+        }
+        else {
+            this.model.setCurrentPlayer(this.model.pollNextPlayerToRefute().get());
+        }
+
         this.model.setWaitingForPlayer(true);
     }
 

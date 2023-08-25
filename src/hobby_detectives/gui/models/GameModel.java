@@ -146,7 +146,14 @@ public class GameModel {
     private Queue<Player> playersToRefute = new ArrayDeque<>();
     public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
     public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
-    public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
+    public Optional<Player> pollNextPlayerToRefute() {
+        if(playersToRefute.poll() == null) return Optional.empty();
+        return Optional.of(playersToRefute.poll());
+    }
+    public Optional<Player> peekNextPlayerToRefute() {
+        if(playersToRefute.poll() == null) return Optional.empty();
+        return Optional.of(playersToRefute.peek());
+    }
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.
