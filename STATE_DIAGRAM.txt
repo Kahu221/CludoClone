@@ -1,60 +1,69 @@
 class DetectivesGameSM {
-  game {
-    game_setup {
-      start_game_button_clicked -> map_view;
+  game_view {
+    setup_view {
+      confirm_setup -> waiting_for_player_view;
     }
-    
-    map_view {
-      
+    waiting_for_player_view {
+      visible {
+        confirm_presence -> player_turn;
+      }
+      exit / {
+        waiting_for_player_set_to_true;
+      }
+    }
+   
+    player_turn {
       entry / {
         drawMap();
         drawStatus();
       }
-      
-      [canGuess() && hasMoves()] clicks_on_estate -> guess_popup;
-      [hasMoves()] click_on_empty_tile -> map_view;
-      
-      clicks_exit_button -> exited;
-      
-      finish_turn_btn_click -> waiting_for_next_player;
+      waiting_for_input {
+        [canGuess() && hasMoves()] clicks_on_estate -> ask_player_for_guess;
+        //[hasMoves()] click_on_empty_tile -> map_view;
+
+        clicks_exit_button -> exited;
+
+        end_turn -> waiting_for_player_view;
+      }
+      ask_player_for_guess {
+        wants_to_guess -> guess_popup;
+        does_not_want_to_guess -> waiting_for_player_view;
+      }
+      map_view {
+        not_visible {
+          waiting_for_player_set_to_true -> map_view.visible;
+        }
+        visible {
+          waiting_for_player_set_to_false -> map_view.not_visible;
+        }
+  	  }
+      status_panel_view {
+        not_visible {
+          waiting_for_player_set_to_true -> status_panel_view.visible;
+        }
+        visible {
+          waiting_for_player_set_to_false -> status_panel_view.not_visible;
+        }
+  	  }
     }
+    
     
     guess_popup {
-      
-      entry / { openPopup(); 
-              	confirm -> waiting_for_next_refuter;
-              }
-      
-      confirm -> waiting_for_next_refuter;
-      cancel -> waiting_for_next_player;
-      
-      exit / { closePopup(); }
-    }
-    
-    refute_guess {
-      player_refutes_guess -> waiting_for_next_refuter;
-      
-      finished_refuting -> waiting_for_next_refuter;
-    }
-    
-    waiting_for_next_refuter {
-      player_confirms_presence -> refute_guess;
-    }
-    
-    exited {
-      entry / { System.exit(0); }
-      // this state can never be exited
-    }
-    
-    waiting_for_next_player {
-      
-      entry / {
-        clearScreen();
-        popupPlayerTransition();
+      waiting_for_player_to_select {
+        player_confirms_selection -> waiting_for_next_player;
       }
-      
-      player_confirms_presence -> map_view;
-      
+      waiting_for_player_to_select_refute {
+        no_more_players -> show_refutation_result;
+        next_player_exists -> waiting_for_player_to_select_refute;
+      }
+      waiting_for_next_player {
+        no_more_players -> show_refutation_result;
+        player_confirms_presence -> waiting_for_player_to_select_refute;
+      }
+      show_refutation_result {
+        player_is_correct -> exited;
+        player_is_incorrect -> waiting_for_player_view;
+      }
     }
   }
 }
