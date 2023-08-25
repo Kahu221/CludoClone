@@ -200,6 +200,7 @@ public class GameController {
                         .orElse(this.model.players.peek())
         );
         this.model.pollNextPlayerToRefute();
+        this.model.refutableCards.clear();
         this.model.setWaitingForPlayer(true);
     }
     public void startRefutingCycle() {
@@ -231,7 +232,16 @@ public class GameController {
         this.model.playerIsAttemptingToSolve();
     }
 
-
+    public void figureOutIfCurrentPlayerCanRefuteAnyCards() {
+        for(Card currentPlayerCard: this.model.getCurrentPlayer().getCards()) {
+            if(this.model.getCurrentGuess().contains(currentPlayerCard)) {
+                this.model.refutableCards.add(currentPlayerCard);
+            }
+        }
+    }
+    public void clearRefutableCards() {
+        this.model.refutableCards.clear();
+    }
 
     public void computeSolveAttempt(CardTriplet cardTriplet) {
         this.model.resetAttemptingToSolve();

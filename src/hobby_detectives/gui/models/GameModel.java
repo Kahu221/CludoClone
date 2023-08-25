@@ -242,6 +242,11 @@ public class GameModel {
     }
     public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
 
+    /* INFO FOR KAHU */
+    /* IN HERE SHOULD BE ALL THE INFO YOU NEED TO MAKE THIS HOE LOOK GOOD */
+        //private CardTriplet currentGuess; <- THIS IS ALREADY AT TOP OF GAMEMODEL
+    public CardTriplet getCurrentGuess() { return this.currentGuess; }
+    public List<Card> refutableCards = new ArrayList<>();
 
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
