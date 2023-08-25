@@ -1,7 +1,6 @@
 package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.game.Card;
-import hobby_detectives.game.CardTriplet;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
@@ -11,7 +10,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -29,7 +27,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JButton solveButton = new JButton("Solve");
     private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
-    private GameView parent;
+    private final GameView parent;
 
 
     public StatusPanelView(GameModel model, GameController controller, GameView parent) {
@@ -65,6 +63,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         );
 
 
+
         //set font sizes
         currentPlayer.setFont(new Font("Arial", Font.PLAIN, 30));
         currentDiceRoll.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -78,7 +77,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     private JPanel addButtons(){
-
         JPanel buttonContainer = new JPanel();
         buttonContainer.add(solveButton);
         buttonContainer.add(endTurnButton);
@@ -122,7 +120,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void drawGuess(){
-        new GuessAndSolveView(this.parent, this.controller, this.model);
+        new GuessView(this.parent, this.controller, this.model);
     }
 
     public void propertyChange(PropertyChangeEvent event) {

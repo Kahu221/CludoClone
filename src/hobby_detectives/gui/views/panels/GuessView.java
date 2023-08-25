@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class GuessAndSolveView {
+public class GuessView {
     ArrayList<JButton> weaponButtons = new ArrayList<>();
     ArrayList<JButton> characterButtons = new ArrayList<>();
     private final GameView parent;
@@ -23,8 +23,7 @@ public class GuessAndSolveView {
 
     private JDialog frame;
     private GameController controller;
-
-    public GuessAndSolveView(GameView parent, GameController controller, GameModel model) {
+    public GuessView(GameView parent, GameController controller, GameModel model) {
         this.controller = controller;
         this.model = model;
         this.parent = parent;

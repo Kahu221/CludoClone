@@ -110,6 +110,24 @@ public class GameModel {
         this.observable.firePropertyChange("attemptingToSolve", true, false);
     }
 
+    private boolean playerWin = false;
+    private boolean playerLoss = false;
+
+    public void playerHasWon() {
+        playerWin = true;
+        this.observable.firePropertyChange("playerWin", false, true);
+    }
+
+    public void playerHasLost() {
+        playerLoss = true;
+        this.observable.firePropertyChange("playerLoss", false, true);
+    }
+
+    public void resetPlayerLoss() {
+        playerLoss = false;
+        this.observable.firePropertyChange("playerLoss", true, false);
+    }
+
     private String errorMessage = null;
 
     public String getErrorMessage() {
@@ -121,7 +139,6 @@ public class GameModel {
         this.errorMessage = errorMessage;
         this.observable.firePropertyChange("errorMessage", old, this.errorMessage);
     }
-
 
     private final Board board;
 
@@ -223,6 +240,11 @@ public class GameModel {
     public void setPolling(boolean polling) {
         this.polling = polling;
     }
+    public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
+    public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
+    public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
+
+
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.
@@ -381,6 +403,10 @@ public class GameModel {
             p.setAllowedToGuess(false);
             return false;
         }
+    }
+
+    public CardTriplet getCorrectTriplet() {
+        return correctTriplet;
     }
 
     /**
