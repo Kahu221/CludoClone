@@ -89,13 +89,14 @@ public class GameView extends JFrame implements PropertyChangeListener {
         switch (propName){
             case "hasMovedIntoEstate" -> {
                 if (event.getNewValue().equals(true)) {
+                    removeViews();
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
                     this.gnView = new GuessNotificationView(this.model, this.controller);
                     this.add(this.gnView);
 
                 } else {
-                    this.remove(this.wfpView);
+                    removeViews();
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }
@@ -105,7 +106,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
             case "waitingForPlayer" -> {
                 if ((Boolean) event.getNewValue()) {
-                    if (gnView != null) this.remove(gnView);
+                    removeViews();
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
                     this.wfpView = new WaitingForPlayerView(this.model, this.controller);
@@ -113,12 +114,12 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     if (this.rfView != null) { this.remove(this.rfView); }
                 } else {
                     if(this.model.getPlayersToRefute().isEmpty()) {
-                        this.remove(this.wfpView);
+                        removeViews();
                         addGridComponent(statusPanel, 0, 0, 1, 4);
                         addGridComponent(mapView, 1, 0, 3, 4);
                     }
                     else {
-                        this.remove(this.wfpView);
+                        removeViews();
                         this.rfView = new RefutationView(this.model, this.controller);
                         this.add(rfView);
                     }
@@ -130,13 +131,14 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
             case "attemptingToSolve" -> {
                 if (event.getNewValue().equals(true)) {
-                    if (gnView != null) this.remove(gnView);
+                    addGridComponent(statusPanel, 0, 0, 1, 4);
+                    addGridComponent(mapView, 1, 0, 3, 4);
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
                     spView = new SolvePanelView(this, model, controller);
                     this.add(spView);
                 } else {
-                    if (gnView != null) this.remove(gnView);
+                    removeViews();
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }
@@ -146,14 +148,29 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
             case "playerWin" -> {
                 if (event.getNewValue().equals(true)) {
-                    if (gnView != null) this.remove(gnView);
-                    if (spView != null) this.remove(spView);
+                    removeViews();
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
                     wlPanel = new WinPanel(this.model);
                     this.add(wlPanel);
                 } else {
-                    if (gnView != null) this.remove(gnView);
+                    removeViews();
+                    addGridComponent(statusPanel, 0, 0, 1, 4);
+                    addGridComponent(mapView, 1, 0, 3, 4);
+                }
+                this.revalidate();
+                this.repaint();
+            }
+
+            case "playerLoss" -> {
+                if (event.getNewValue().equals(true)) {
+                    removeViews();
+                    this.remove(this.mapView);
+                    this.remove(this.statusPanel);
+                    wlPanel = new LosePanel(this.controller);
+                    this.add(wlPanel);
+                } else {
+                    removeViews();
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }
@@ -161,6 +178,13 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 this.repaint();
             }
         }
+    }
+
+    private void removeViews() {
+        if (wfpView != null) this.remove(wfpView);
+        if (gnView != null) this.remove(gnView);
+        if (wlPanel != null) this.remove(wlPanel);
+        if (spView != null) this.remove(spView);
     }
 
     private void addGridComponent(Component component, int gridx, int gridy, int gridwidth, int gridheight) {

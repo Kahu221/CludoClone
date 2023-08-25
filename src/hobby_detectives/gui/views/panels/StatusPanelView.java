@@ -27,7 +27,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     private final JButton solveButton = new JButton("Solve");
     private final JButton endTurnButton = new JButton("End Turn");
     private final JPanel cards = new JPanel();
-    private GameView parent;
+    private final GameView parent;
 
 
     public StatusPanelView(GameModel model, GameController controller, GameView parent) {
@@ -63,6 +63,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
         );
 
 
+
         //set font sizes
         currentPlayer.setFont(new Font("Arial", Font.PLAIN, 30));
         currentDiceRoll.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -76,7 +77,6 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     private JPanel addButtons(){
-
         JPanel buttonContainer = new JPanel();
         buttonContainer.add(solveButton);
         buttonContainer.add(endTurnButton);

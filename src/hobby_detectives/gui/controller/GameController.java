@@ -190,6 +190,8 @@ public class GameController {
 
 
     public void endTurn() {
+        this.model.resetAttemptingToSolve();
+        this.model.resetPlayerLoss();
         this.model.setErrorMessage("");
         this.model.players.add(this.model.getCurrentPlayer());
         System.out.println("Setting to " + this.model.players.peek());
@@ -214,6 +216,7 @@ public class GameController {
     }
 
     public void attemptSolve() {
+        this.model.getCurrentPlayer().playerHasSolved();
         this.model.playerIsAttemptingToSolve();
     }
 
@@ -221,7 +224,7 @@ public class GameController {
 
     public void computeSolveAttempt(CardTriplet cardTriplet) {
         this.model.resetAttemptingToSolve();
-        if (this.model.getCorrectTriplet().equals(cardTriplet)) {
+        if ((this.model.getCorrectTriplet().equals(cardTriplet))) {
             System.out.println("Winning");
             model.playerHasWon();;
         } else {
