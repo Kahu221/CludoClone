@@ -147,6 +147,8 @@ public class GameModel {
     public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
     public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
     public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
+
+
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.
@@ -306,6 +308,10 @@ public class GameModel {
             p.setAllowedToGuess(false);
             return false;
         }
+    }
+
+    public CardTriplet getCorrectTriplet() {
+        return correctTriplet;
     }
 
     /**

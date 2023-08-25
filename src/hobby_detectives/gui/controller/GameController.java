@@ -214,7 +214,18 @@ public class GameController {
     }
 
     public void attemptSolve() {
-        System.out.println("farts");
         this.model.playerIsAttemptingToSolve();
+    }
+
+    public void computeSolveAttempt(CardTriplet cardTriplet) {
+        if (this.model.getCorrectTriplet().equals(cardTriplet)) {
+            System.out.println("Winning");
+        } else {
+            System.out.println("Loser");
+        }
+    }
+
+    public void hasWon() {
+
     }
 }

@@ -15,9 +15,7 @@ import java.util.ArrayList;
 
 public class SolvePanelView extends JPanel {
 
-    private final GameView parent;
     private final GameModel model;
-    private final GameController controller;
 
     private final ArrayList<Card> solveCards = new ArrayList<>();
 
@@ -27,9 +25,7 @@ public class SolvePanelView extends JPanel {
 
 
     public SolvePanelView(GameView parent, GameModel model, GameController controller) {
-        this.parent = parent;
         this.model = model;
-        this.controller = controller;
         model.getCurrentPlayer().playerHasSolved();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -73,10 +69,19 @@ public class SolvePanelView extends JPanel {
         }
         //finalise and draw
 
+        JButton accept = new JButton("Accept");
+        accept.addActionListener(clicked -> {
+            System.out.println(solveCards);
+            if(solveCards.size() == 3) {
+                controller.computeSolveAttempt(returnSolvedCards());
+            }
+        });
+
         this.add(estateCardsContainer);
         this.add(weaponCardsContainer);
         this.add(personCardsContainer);
-
+        accept.setAlignmentX(CENTER_ALIGNMENT);
+        this.add(accept);
         this.setVisible(true);
 }
 
@@ -101,16 +106,19 @@ public class SolvePanelView extends JPanel {
                 if(!b.getText().equals(cardName)) b.setEnabled(false);
                 else b.setBackground(Color.green);
         }
-        System.out.println(solveCards);
-        if(solveCards.size() == 3) controller.confirmedGuess(returnGuessedCards());
     }
 
-    //TODO THIS IS SO UGLY
-    public CardTriplet returnGuessedCards(){
+    public CardTriplet returnSolvedCards(){
         return new CardTriplet(
-                (WeaponCard) solveCards.stream().filter(c -> c instanceof WeaponCard).findFirst().orElse(null),
-                this.model.getEstateCardForCurrentEstate(),
-                (PlayerCard) solveCards.stream().filter(c -> c instanceof PlayerCard).findFirst().orElse(null)
+                (WeaponCard) solveCards.stream().filter(c -> c instanceof WeaponCard)
+                        .findFirst()
+                        .orElse(null),
+                (EstateCard) solveCards.stream().filter(c -> c instanceof EstateCard)
+                        .findFirst()
+                        .orElse(null),
+                (PlayerCard) solveCards.stream().filter(c -> c instanceof PlayerCard)
+                        .findFirst()
+                        .orElse(null)
         );
     }
 }
