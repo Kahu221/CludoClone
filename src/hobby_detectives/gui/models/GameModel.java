@@ -94,6 +94,24 @@ public class GameModel {
         this.observable.firePropertyChange("attemptingToSolve", true, false);
     }
 
+    private boolean playerWin = false;
+    private boolean playerLoss = false;
+
+    public void playerHasWon() {
+        playerWin = true;
+        this.observable.firePropertyChange("playerWin", false, true);
+    }
+
+    public void playerHasLost() {
+        playerLoss = true;
+        this.observable.firePropertyChange("playerLoss", false, true);
+    }
+
+    public void resetPlayerLoss() {
+        playerLoss = false;
+        this.observable.firePropertyChange("playerLoss", true, false);
+    }
+
     private String errorMessage = null;
     public String getErrorMessage() { return this.errorMessage; }
     public void setErrorMessage(String errorMessage) {
@@ -101,7 +119,6 @@ public class GameModel {
         this.errorMessage = errorMessage;
         this.observable.firePropertyChange("errorMessage", old, this.errorMessage);
     }
-
 
     private final Board board;
     public Board getBoard() { return this.board; }

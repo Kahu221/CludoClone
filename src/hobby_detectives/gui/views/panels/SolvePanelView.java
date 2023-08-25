@@ -26,7 +26,6 @@ public class SolvePanelView extends JPanel {
 
     public SolvePanelView(GameView parent, GameModel model, GameController controller) {
         this.model = model;
-        model.getCurrentPlayer().playerHasSolved();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

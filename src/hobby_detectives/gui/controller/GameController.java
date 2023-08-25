@@ -217,15 +217,16 @@ public class GameController {
         this.model.playerIsAttemptingToSolve();
     }
 
+
+
     public void computeSolveAttempt(CardTriplet cardTriplet) {
+        this.model.resetAttemptingToSolve();
         if (this.model.getCorrectTriplet().equals(cardTriplet)) {
             System.out.println("Winning");
+            model.playerHasWon();;
         } else {
-            System.out.println("Loser");
+            model.playerHasLost();
         }
     }
 
-    public void hasWon() {
-
-    }
 }

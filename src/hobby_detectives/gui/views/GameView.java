@@ -29,13 +29,9 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     private WaitingForPlayerView wfpView;
     private GuessNotificationView gnView;
-    private SolvePanelView spView;
     private RefutationView rfView;
-
-
-
+    private SolvePanelView spView;
     private JPanel wlPanel;
-
     private final SetupView setupView;
 
     public GameView(GameModel model, GameController controller) {
@@ -88,6 +84,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
     }
 
     public void propertyChange(PropertyChangeEvent event) {
+        System.out.println(this.model.correctTriplet);
         String propName = event.getPropertyName();
         switch (propName){
             case "hasMovedIntoEstate" -> {
@@ -136,9 +133,10 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     if (gnView != null) this.remove(gnView);
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
-                    this.spView = new SolvePanelView(this, model, controller);
+                    spView = new SolvePanelView(this, model, controller);
                     this.add(spView);
                 } else {
+                    if (gnView != null) this.remove(gnView);
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }
@@ -146,14 +144,16 @@ public class GameView extends JFrame implements PropertyChangeListener {
                 this.repaint();
             }
 
-            case "playerHasLost" -> {
+            case "playerWin" -> {
                 if (event.getNewValue().equals(true)) {
                     if (gnView != null) this.remove(gnView);
+                    if (spView != null) this.remove(spView);
                     this.remove(this.mapView);
                     this.remove(this.statusPanel);
-                    this.wlPanel = new LosePanel(controller);
+                    wlPanel = new WinPanel(this.model);
                     this.add(wlPanel);
                 } else {
+                    if (gnView != null) this.remove(gnView);
                     addGridComponent(statusPanel, 0, 0, 1, 4);
                     addGridComponent(mapView, 1, 0, 3, 4);
                 }

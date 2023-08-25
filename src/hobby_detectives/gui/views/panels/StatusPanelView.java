@@ -1,7 +1,6 @@
 package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.game.Card;
-import hobby_detectives.game.CardTriplet;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
@@ -11,7 +10,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -122,7 +120,7 @@ public class StatusPanelView extends JPanel implements PropertyChangeListener {
     }
 
     public void drawGuess(){
-        new GuessAndSolveView(this.parent, this.controller, this.model);
+        new GuessView(this.parent, this.controller, this.model);
     }
 
     public void propertyChange(PropertyChangeEvent event) {
