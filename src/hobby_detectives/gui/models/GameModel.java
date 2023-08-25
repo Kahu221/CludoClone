@@ -142,6 +142,12 @@ public class GameModel {
                 .get()
                 .getValue();
     }
+
+    /** For refutation */
+    private Queue<Player> playersToRefute = new ArrayDeque<>();
+    public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
+    public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
+    public Player getNextPlayerToRefute() { return playersToRefute.poll(); }
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
      * until a valid boolean value is entered.

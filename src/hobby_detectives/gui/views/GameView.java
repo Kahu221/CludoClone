@@ -25,6 +25,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     private WaitingForPlayerView wfpView;
     private GuessNotificationView gnView;
+    private RefutationView rfView;
 
     private final SetupView setupView;
 
@@ -87,10 +88,20 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     this.remove(this.statusPanel);
                     this.wfpView = new WaitingForPlayerView(this.model, this.controller);
                     this.add(this.wfpView);
+                    if (this.rfView != null) {
+                        this.remove(this.rfView);
+                    }
                 } else {
-                    this.remove(this.wfpView);
-                    addGridComponent(statusPanel, 0, 0, 1, 4);
-                    addGridComponent(mapView, 1, 0, 3, 4);
+                    if(this.model.getPlayersToRefute().isEmpty()) {
+                        this.remove(this.wfpView);
+                        addGridComponent(statusPanel, 0, 0, 1, 4);
+                        addGridComponent(mapView, 1, 0, 3, 4);
+                    }
+                    else {
+                        this.remove(this.wfpView);
+                        this.rfView = new RefutationView(this.model, this.controller);
+                        this.add(rfView);
+                    }
                 }
                 this.revalidate();
                 this.repaint();

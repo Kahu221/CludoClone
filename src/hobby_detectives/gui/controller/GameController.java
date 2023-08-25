@@ -112,9 +112,16 @@ public class GameController {
      * rolls the dice, and sets up actions for the player.
      */
     public void startPlayerTurn() {
-        this.model.players.poll();
-        this.model.rollDice();
+        if(this.model.getPlayersToRefute().isEmpty()) {
+            this.model.players.poll();
+            this.model.rollDice();
+        }
+        else {
+            this.model.getNextPlayerToRefute();
+        }
+
     }
+
 
     public void tryMovePlayer(Position desiredPosition) {
         this.model.resetHasMovedIntoEstate();
@@ -190,6 +197,12 @@ public class GameController {
         this.model.setWaitingForPlayer(true);
     }
 
+    public void endRefutationTurn() {
+        this.model.setErrorMessage("");
+        this.model.setCurrentPlayer(this.model.getNextPlayerToRefute());
+        this.model.setWaitingForPlayer(true);
+    }
+
     public void promptPlayerForGuess() {
         this.model.changeGuessState(true);
     }
@@ -197,6 +210,7 @@ public class GameController {
     public void confirmedGuess(CardTriplet guessedCards){
         model.changeGuessState(false);
         model.setCurrentGuess(guessedCards);
+        model.setPlayersToRefute(new ArrayDeque<>(this.model.players));
     }
 
     public void attemptSolve() {
