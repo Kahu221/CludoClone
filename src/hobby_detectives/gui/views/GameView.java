@@ -1,7 +1,6 @@
 package hobby_detectives.gui.views;
-import hobby_detectives.data.CharacterType;
+
 import hobby_detectives.game.Card;
-import hobby_detectives.game.PlayerCard;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.panels.*;
@@ -21,7 +20,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     private final GameController controller;
     private final GameModel model;
-    
+
     public final StatusPanelView statusPanel;
     public final MapPanelView mapView;
 
@@ -31,7 +30,6 @@ public class GameView extends JFrame implements PropertyChangeListener {
     private GuessNotificationView gnView;
     private SolvePanelView spView;
     private RefutationView rfView;
-
 
 
     private final SetupView setupView;
@@ -44,8 +42,8 @@ public class GameView extends JFrame implements PropertyChangeListener {
         this.model.addPropertyChangeListener(this);
 
         var gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWeights = new double[] { 0.1, 0.1, 0.1, 0.1 };
-        gridBagLayout.rowWeights = new double[] { 0.1, 0.1, 0.1, 0.1 };
+        gridBagLayout.columnWeights = new double[]{0.1, 0.1, 0.1, 0.1};
+        gridBagLayout.rowWeights = new double[]{0.1, 0.1, 0.1, 0.1};
         this.setLayout(gridBagLayout);
 
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -63,7 +61,9 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
         var game = new JMenu("Game");
         var exit = new JMenuItem("Exit");
-        exit.addActionListener(e -> { this.promptForGameExit(); });
+        exit.addActionListener(e -> {
+            this.promptForGameExit();
+        });
         game.add(exit);
         menuBar.add(game);
 
@@ -87,7 +87,7 @@ public class GameView extends JFrame implements PropertyChangeListener {
 
     public void propertyChange(PropertyChangeEvent event) {
         String propName = event.getPropertyName();
-        switch (propName){
+        switch (propName) {
             case "hasMovedIntoEstate" -> {
                 if (event.getNewValue().equals(true)) {
                     this.remove(this.mapView);
@@ -111,17 +111,20 @@ public class GameView extends JFrame implements PropertyChangeListener {
                     this.remove(this.statusPanel);
                     this.wfpView = new WaitingForPlayerView(this.model, this.controller);
                     this.add(this.wfpView);
-                    if (this.rfView != null) { this.remove(this.rfView); }
+                    if (this.rfView != null) {
+                        this.remove(this.rfView);
+                    }
                 } else {
-                    if(this.model.getPlayersToRefute().isEmpty()) {
+                    if (!this.model.getRefuting()) {
+                        controller.allowPolling();
                         this.remove(this.wfpView);
                         addGridComponent(statusPanel, 0, 0, 1, 4);
                         addGridComponent(mapView, 1, 0, 3, 4);
-                    }
-                    else {
+                    } else {
                         this.remove(this.wfpView);
                         this.rfView = new RefutationView(this.model, this.controller);
                         this.add(rfView);
+                        controller.disallowPolling();
                     }
 
                 }
@@ -154,12 +157,13 @@ public class GameView extends JFrame implements PropertyChangeListener {
         constraints.fill = GridBagConstraints.BOTH;
         this.add(component, constraints);
     }
+
     //TODO fix the center alignment of the contiue button i have legot no idea why this does not work but this is functional for now
-    public void refutedCardsPopUpSetup(ArrayList<Card> refutedCards){
+    public void refutedCardsPopUpSetup(ArrayList<Card> refutedCards) {
         JDialog refutedPopUp = new JDialog(this, "Refuted cards!");
         refutedPopUp.getContentPane().setLayout(new BoxLayout(refutedPopUp.getContentPane(), BoxLayout.Y_AXIS));
         //No refuted cards
-        if(refutedCards.isEmpty()){
+        if (refutedCards.isEmpty()) {
             JLabel noRefute = new JLabel("No one was able to refute your guess!");
             noRefute.setFont(new Font("Arial", Font.PLAIN, 30));
             refutedPopUp.add(noRefute);
@@ -169,9 +173,9 @@ public class GameView extends JFrame implements PropertyChangeListener {
             refuteTitle.setFont(new Font("Arial", Font.PLAIN, 30));
             refutedPopUp.add(refuteTitle);
             JPanel cardContainer = new JPanel();
-            for(Card c : refutedCards){
+            for (Card c : refutedCards) {
                 JPanel refutedCard = new JPanel();
-                refutedCard.setPreferredSize(new Dimension(100,200));
+                refutedCard.setPreferredSize(new Dimension(100, 200));
                 refutedCard.setBackground(new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)));
                 refutedCard.add(new JLabel(c.toString()));
                 cardContainer.add(refutedCard);

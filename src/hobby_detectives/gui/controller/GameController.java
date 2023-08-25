@@ -112,14 +112,10 @@ public class GameController {
      * rolls the dice, and sets up actions for the player.
      */
     public void startPlayerTurn() {
-        if(this.model.getPlayersToRefute().isEmpty()) {
+        if(this.model.isPolling()) {
             this.model.players.poll();
             this.model.rollDice();
         }
-        else {
-            //this.model.pollNextPlayerToRefute();
-        }
-
     }
 
 
@@ -187,8 +183,6 @@ public class GameController {
         }
     }
 
-
-
     public void endTurn() {
         this.model.setErrorMessage("");
         this.model.players.add(this.model.getCurrentPlayer());
@@ -199,17 +193,24 @@ public class GameController {
 
     public void endRefutationTurn() {
         this.model.setErrorMessage("");
-
-        if(this.model.peekNextPlayerToRefute().isEmpty()) {
-            this.model.setCurrentPlayer(this.model.players.peek());
-        }
-        else {
-            this.model.setCurrentPlayer(this.model.pollNextPlayerToRefute().get());
-        }
-
+        this.model.setCurrentPlayer(
+                this.model.peekNextPlayerToRefute()
+                        .orElse(this.model.players.peek())
+        );
+        this.model.pollNextPlayerToRefute();
         this.model.setWaitingForPlayer(true);
     }
-
+    public void startRefutingCycle() {
+        this.model.setRefuting(true);
+        this.model.players.add(this.model.getCurrentPlayer());
+    }
+    public void endRefutingCycle() {
+        if(this.model.getPlayersToRefute().isEmpty()) {
+            this.model.setRefuting(false);
+        }
+    }
+    public void allowPolling() { this.model.setPolling(true); }
+    public void disallowPolling() { this.model.setPolling(false); }
     public void promptPlayerForGuess() {
         this.model.changeGuessState(true);
     }
@@ -218,6 +219,9 @@ public class GameController {
         model.changeGuessState(false);
         model.setCurrentGuess(guessedCards);
         model.setPlayersToRefute(new ArrayDeque<>(this.model.players));
+        model.addPlayerToRefute(this.model.getCurrentPlayer());
+        model.characterThatGuessed = this.model.getCurrentPlayer().getCharacter();
+        startRefutingCycle();
     }
 
     public void attemptSolve() {

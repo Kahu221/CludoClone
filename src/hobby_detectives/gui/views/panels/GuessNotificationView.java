@@ -2,6 +2,7 @@ package hobby_detectives.gui.views.panels;
 
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -30,7 +31,7 @@ public class GuessNotificationView extends JPanel {
         });
 
         endTurn.addActionListener(onClick -> {
-            controller.endTurn();
+            controller.endRefutationTurn();
         });
 
         this.add(moved);

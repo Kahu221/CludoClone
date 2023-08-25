@@ -1,10 +1,11 @@
 package hobby_detectives.gui.views.panels;
 
-import hobby_detectives.board.world.Estate;
 import hobby_detectives.data.CharacterType;
-import hobby_detectives.data.EstateType;
 import hobby_detectives.data.WeaponType;
-import hobby_detectives.game.*;
+import hobby_detectives.game.Card;
+import hobby_detectives.game.CardTriplet;
+import hobby_detectives.game.PlayerCard;
+import hobby_detectives.game.WeaponCard;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 import hobby_detectives.gui.views.GameView;
@@ -13,15 +14,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class GuessAndSolveView{
+public class GuessAndSolveView {
     ArrayList<JButton> weaponButtons = new ArrayList<>();
-    ArrayList <JButton> characterButtons = new ArrayList<>();
+    ArrayList<JButton> characterButtons = new ArrayList<>();
     private final GameView parent;
     private GameModel model;
     private ArrayList<Card> chosenCards = new ArrayList<>();
 
     private JDialog frame;
     private GameController controller;
+
     public GuessAndSolveView(GameView parent, GameController controller, GameModel model) {
         this.controller = controller;
         this.model = model;
@@ -37,15 +39,15 @@ public class GuessAndSolveView{
 
         /* Manually guess the EstateCard for the Estate the player is currently in */
         JButton currentEstate = new JButton(model.getEstateCardForCurrentEstate().estate.name());
-        currentEstate.setPreferredSize(new Dimension(130,200));
+        currentEstate.setPreferredSize(new Dimension(130, 200));
         currentEstate.setBackground(Color.green);
         chosenCards.add(model.getEstateCardForCurrentEstate());
         estateCardsContainer.add(currentEstate);
 
         var weaponCardsContainer = new JPanel();
-        for(WeaponType w : WeaponType.values()){
+        for (WeaponType w : WeaponType.values()) {
             JButton currentWeapon = new JButton(w.name());
-            currentWeapon.setPreferredSize(new Dimension(130,200));
+            currentWeapon.setPreferredSize(new Dimension(130, 200));
             currentWeapon.addActionListener(clicked -> {
                 attemptToChooseCard(currentWeapon.getText());
             });
@@ -53,9 +55,9 @@ public class GuessAndSolveView{
             weaponCardsContainer.add(currentWeapon);
         }
         var personCardsContainer = new JPanel();
-        for(CharacterType c : CharacterType.values()){
+        for (CharacterType c : CharacterType.values()) {
             JButton currentCharacter = new JButton(c.name());
-            currentCharacter.setPreferredSize(new Dimension(130,200));
+            currentCharacter.setPreferredSize(new Dimension(130, 200));
             currentCharacter.addActionListener(clicked -> {
                 attemptToChooseCard(currentCharacter.getText());
             });
@@ -71,27 +73,25 @@ public class GuessAndSolveView{
     }
 
     //TODO logic here can defo be done better
-    public void attemptToChooseCard(String cardName){
+    public void attemptToChooseCard(String cardName) {
         Card chosenCard = model.allCards.get(cardName);
 
-        if(chosenCard instanceof WeaponCard && chosenCards.stream().noneMatch(c -> c instanceof WeaponCard)){
+        if (chosenCard instanceof WeaponCard && chosenCards.stream().noneMatch(c -> c instanceof WeaponCard)) {
             chosenCards.add(chosenCard);
-            for(JButton b : weaponButtons)
-                if(!b.getText().equals(cardName)) b.setEnabled(false);
+            for (JButton b : weaponButtons)
+                if (!b.getText().equals(cardName)) b.setEnabled(false);
+                else b.setBackground(Color.green);
+        } else if (chosenCard instanceof PlayerCard && chosenCards.stream().noneMatch(c -> c instanceof PlayerCard)) {
+            chosenCards.add(chosenCard);
+            for (JButton b : characterButtons)
+                if (!b.getText().equals(cardName)) b.setEnabled(false);
                 else b.setBackground(Color.green);
         }
-        else if(chosenCard instanceof PlayerCard && chosenCards.stream().noneMatch(c -> c instanceof PlayerCard)) {
-            chosenCards.add(chosenCard);
-            for(JButton b : characterButtons)
-                if(!b.getText().equals(cardName)) b.setEnabled(false);
-                else b.setBackground(Color.green);
-        }
-        System.out.println(chosenCards);
-        if(chosenCards.size() == 3) controller.confirmedGuess(returnGuessedCards());
+        if (chosenCards.size() == 3) controller.confirmedGuess(returnGuessedCards());
     }
 
     //TODO THIS IS SO UGLY
-    public CardTriplet returnGuessedCards(){
+    public CardTriplet returnGuessedCards() {
         frame.dispose();
         return new CardTriplet(
                 (WeaponCard) chosenCards.stream().filter(c -> c instanceof WeaponCard).findFirst().orElse(null),

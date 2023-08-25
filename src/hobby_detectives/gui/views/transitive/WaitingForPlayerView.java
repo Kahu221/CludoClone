@@ -2,7 +2,6 @@ package hobby_detectives.gui.views.transitive;
 
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
-import hobby_detectives.player.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +18,7 @@ public class WaitingForPlayerView extends JPanel {
         acknowledgePresence.addActionListener(onClick -> {
             controller.confirmPlayerChange();
         });
+
         this.add(welcome);
         this.add(acknowledgePresence);
     }

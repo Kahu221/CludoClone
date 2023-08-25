@@ -1,8 +1,11 @@
 package hobby_detectives.gui.models;
 
 import hobby_detectives.board.Board;
+import hobby_detectives.data.CharacterType;
 import hobby_detectives.data.EstateType;
-import hobby_detectives.game.*;
+import hobby_detectives.game.Card;
+import hobby_detectives.game.CardTriplet;
+import hobby_detectives.game.EstateCard;
 import hobby_detectives.player.Player;
 
 import java.beans.PropertyChangeListener;
@@ -15,7 +18,8 @@ import java.util.*;
 public class GameModel {
     private boolean wantsToGuess = false;
     private CardTriplet currentGuess;
-    public void changeGuessState(boolean a){
+
+    public void changeGuessState(boolean a) {
         boolean old = this.wantsToGuess;
         this.observable.firePropertyChange("wantsToGuess", old, a);
         this.wantsToGuess = a;
@@ -26,7 +30,10 @@ public class GameModel {
         System.out.println("the current guess is :  " + currentGuess.toString());
     }
 
-    public boolean getWantToGuess(){return wantsToGuess;}
+    public boolean getWantToGuess() {
+        return wantsToGuess;
+    }
+
     private final PropertyChangeSupport observable = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -47,7 +54,11 @@ public class GameModel {
     private boolean running = false;
 
     private Player currentPlayer = null;
-    public Player getCurrentPlayer() { return this.currentPlayer; }
+
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
     public void setCurrentPlayer(Player p) {
         Player oldPlayer = this.currentPlayer;
         this.currentPlayer = p;
@@ -55,7 +66,11 @@ public class GameModel {
     }
 
     private boolean waitingForPlayer = false;
-    public boolean getWaitingForPlayer() { return this.waitingForPlayer; }
+
+    public boolean getWaitingForPlayer() {
+        return this.waitingForPlayer;
+    }
+
     public void setWaitingForPlayer(boolean wfp) {
         boolean old = waitingForPlayer;
         this.waitingForPlayer = wfp;
@@ -63,6 +78,7 @@ public class GameModel {
     }
 
     private boolean hasMovedIntoEstate = false;
+
     public boolean getHasMovedIntoEstate() {
         return this.hasMovedIntoEstate;
     }
@@ -95,7 +111,11 @@ public class GameModel {
     }
 
     private String errorMessage = null;
-    public String getErrorMessage() { return this.errorMessage; }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
     public void setErrorMessage(String errorMessage) {
         String old = this.errorMessage;
         this.errorMessage = errorMessage;
@@ -104,18 +124,26 @@ public class GameModel {
 
 
     private final Board board;
-    public Board getBoard() { return this.board; }
+
+    public Board getBoard() {
+        return this.board;
+    }
+
     public void notifyBoardUpdate() {
         this.observable.firePropertyChange("board", null, board);
     }
 
     private int diceRoll = 0;
-    public int getDiceRoll() { return this.diceRoll; }
+
+    public int getDiceRoll() {
+        return this.diceRoll;
+    }
 
     public void rollDice() {
-        this.diceRoll = random.nextInt(1,6)+random.nextInt(1,6);
+        this.diceRoll = random.nextInt(1, 6) + random.nextInt(1, 6);
         this.observable.firePropertyChange("diceRoll", 0, this.diceRoll);
     }
+
     public void useNumberOfMoves(int n) {
         var old = this.diceRoll;
         this.diceRoll -= n;
@@ -131,9 +159,15 @@ public class GameModel {
         board = new Board(24, this);
     }
 
-    /** Value for Estate entered when player enters an estate */
+    /**
+     * Value for Estate entered when player enters an estate
+     */
     private EstateType estateCurrentPlayerIsIn;
-    public EstateType getEstateCurrentPlayerIsIn() { return estateCurrentPlayerIsIn; }
+
+    public EstateType getEstateCurrentPlayerIsIn() {
+        return estateCurrentPlayerIsIn;
+    }
+
     public EstateCard getEstateCardForCurrentEstate() {
         return (EstateCard) allCards.entrySet().stream()
                 .filter(kvPair -> kvPair.getKey().equals(estateCurrentPlayerIsIn.name()))
@@ -142,17 +176,52 @@ public class GameModel {
                 .getValue();
     }
 
-    /** For refutation */
+    /**
+     * For refutation
+     */
+    public CharacterType characterThatGuessed;
     private Queue<Player> playersToRefute = new ArrayDeque<>();
-    public Queue<Player> getPlayersToRefute() { return this.playersToRefute; }
-    public void setPlayersToRefute(Queue<Player> playersToRefute) { this.playersToRefute = playersToRefute; }
+
+    public Queue<Player> getPlayersToRefute() {
+        return this.playersToRefute;
+    }
+
+    public void setPlayersToRefute(Queue<Player> playersToRefute) {
+        this.playersToRefute = playersToRefute;
+    }
+
+    public void addPlayerToRefute(Player p) {
+        playersToRefute.add(p);
+    }
+
     public Optional<Player> pollNextPlayerToRefute() {
-        if(playersToRefute.poll() == null) return Optional.empty();
+        if (playersToRefute.peek() == null) return Optional.empty();
         return Optional.of(playersToRefute.poll());
     }
+
     public Optional<Player> peekNextPlayerToRefute() {
-        if(playersToRefute.poll() == null) return Optional.empty();
+        if (playersToRefute.peek() == null) return Optional.empty();
         return Optional.of(playersToRefute.peek());
+    }
+
+    private boolean refuting = false;
+
+    public boolean getRefuting() {
+        return refuting;
+    }
+
+    public void setRefuting(boolean refuting) {
+        this.refuting = refuting;
+    }
+
+    private boolean polling = true;
+
+    public boolean isPolling() {
+        return polling;
+    }
+
+    public void setPolling(boolean polling) {
+        this.polling = polling;
     }
     /**
      * Asks the user for a boolean value, by continuously prompting the given prompt
@@ -302,7 +371,6 @@ public class GameModel {
 //            System.out.println("--------------------");
 //        }
 //    }
-
     public boolean attemptSolve(Player p, CardTriplet solveattempt) {
         if (this.correctTriplet.equals(solveattempt)) {
             System.out.println("Your guess was correct. You have won.");
@@ -349,7 +417,6 @@ public class GameModel {
 //        processInput(input, player);
 //        this.players.add(player);
 //    }
-
 
 
 //    private void movePlayerOnceByToken(Position possibleTranslate, Player p) {

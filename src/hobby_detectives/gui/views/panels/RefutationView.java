@@ -1,32 +1,32 @@
 package hobby_detectives.gui.views.panels;
 
-import hobby_detectives.game.Card;
 import hobby_detectives.gui.controller.GameController;
 import hobby_detectives.gui.models.GameModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-
-import java.util.*;
 
 public class RefutationView extends JPanel {
     private GameModel model;
     private GameController gameController;
+
     public RefutationView(GameModel model, GameController controller) {
         this.model = model;
         this.gameController = controller;
         refuteRender();
     }
 
-    private void refuteRender(){
+    private void refuteRender() {
         this.removeAll();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        var moved = new JLabel("BIGGER");
-        moved.setAlignmentY(Component.TOP_ALIGNMENT);
-        moved.setFont(new Font("Arial", Font.PLAIN, 30));
+        JLabel moved = new JLabel("ACTUALLY REFUTING");
 
         JPanel buttons = new JPanel();
+
+        if (model.getCurrentPlayer().getCharacter().equals(model.characterThatGuessed)) {
+            moved = new JLabel("SHOW THIS PLAYER WHAT CARDS HAVE BEEN REFUTED");
+            moved.setFont(new Font("Arial", Font.PLAIN, 30));
+        }
 
         JButton endRefutation = new JButton(
                 "Finish refutation"
@@ -39,6 +39,8 @@ public class RefutationView extends JPanel {
                     this.gameController.endRefutationTurn();
                 }
         );
+
+        this.gameController.endRefutingCycle();
         this.add(buttons);
         this.add(moved);
     }
